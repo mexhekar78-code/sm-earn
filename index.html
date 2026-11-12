@@ -137,27 +137,35 @@ nav button.active{
 
     <div class="card">
       🎁
-      <h3>ডেইলি বোনাস</h3>
-      <small>শিগগিরই আসছে</small>
-    </div>
-
-    <div class="card">
-      👥
-      <h3>রেফার</h3>
-      <small>বন্ধুদের আমন্ত্রণ করুন</small>
-    </div>
-  </div>
-</section>
-
-<section id="refer" class="page">
+      <section id="refer" class="page">
   <h1>Refer & Earn</h1>
 
   <div class="card">
-    <p>আপনার Referral Link</p>
-    <b>SM Earn Referral</b>
+    <h3>আপনার Referral Link</h3>
+
+    <p id="referralLink">
+      Telegram থেকে Mini App খুলুন
+    </p>
+
+    <button onclick="copyReferralLink()">
+      📋 Copy Link
+    </button>
+
+    <button onclick="shareReferralLink()">
+      📤 Share Link
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>Referral Statistics</h3>
+    <p>Total Referrals: <strong id="totalReferrals">0</strong></p>
+    <p>Referral Earnings: <strong>৳0.00</strong></p>
   </div>
 
   <p class="note">
+    Referral reward-এর হার প্রকৃত verified earning অনুযায়ী পরে নির্ধারণ করা হবে।
+  </p>
+</section>
     কমিশনের হার প্রকৃত আয়ের হিসাব অনুযায়ী নির্ধারণ করা হবে।
   </p>
 </section>
