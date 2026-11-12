@@ -1,1174 +1,665 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-  <title>SM Earn</title>
-
-  <style>
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-    }
-
-    :root{
-      --green:#078b4b;
-      --dark-green:#075c38;
-      --light:#f3f8f5;
-      --white:#ffffff;
-      --yellow:#ffd64d;
-      --text:#173c2b;
-      --muted:#79847e;
-      --red:#d73b3b;
-    }
-
-    body{
-      background:var(--light);
-      color:var(--text);
-      font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;
-    }
-
-    button,input,select{
-      font:inherit;
-    }
-
-    button{
-      cursor:pointer;
-    }
-
-    .app{
-      max-width:520px;
-      min-height:100vh;
-      margin:auto;
-      padding-bottom:82px;
-    }
-
-    /* Header */
-
-    .header{
-      position:sticky;
-      top:0;
-      z-index:10;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:23px 18px;
-      color:white;
-      background:linear-gradient(135deg,#05663d,#079652);
-    }
-
-    .logo{
-      font-size:27px;
-      font-weight:900;
-    }
-
-    .tagline{
-      font-size:13px;
-      font-weight:700;
-    }
-
-    .header-balance{
-      font-size:19px;
-      font-weight:700;
-    }
-
-    /* Pages */
-
-    .page{
-      display:none;
-      padding:27px 15px;
-    }
-
-    .page.active{
-      display:block;
-    }
-
-    .page-title{
-      margin-bottom:22px;
-      font-size:32px;
-    }
-
-    /* Common */
-
-    .card{
-      margin-bottom:15px;
-      padding:22px;
-      background:white;
-      border-radius:20px;
-      box-shadow:0 9px 23px rgba(18,59,39,.12);
-    }
-
-    .yellow-button{
-      padding:13px 19px;
-      border:0;
-      border-radius:14px;
-      background:var(--yellow);
-      color:#151515;
-      font-weight:800;
-    }
-
-    .green-button{
-      padding:13px 19px;
-      border:0;
-      border-radius:14px;
-      background:var(--green);
-      color:white;
-      font-weight:800;
-    }
-
-    button:disabled{
-      opacity:.5;
-      cursor:not-allowed;
-    }
-
-    .notice{
-      margin-top:17px;
-      padding:16px;
-      line-height:1.6;
-      background:#fff3c3;
-      border-radius:15px;
-    }
-
-    /* Home */
-
-    .hero{
-      padding:32px 21px;
-      color:white;
-      border-radius:22px;
-      background:linear-gradient(135deg,#08713f,#0ca35b);
-      box-shadow:0 12px 25px rgba(15,73,43,.15);
-    }
-
-    .hero h1{
-      margin-bottom:18px;
-      font-size:31px;
-    }
-
-    .hero p{
-      margin-bottom:23px;
-      font-size:18px;
-    }
-
-    .section-heading{
-      margin:27px 0 17px;
-      font-size:27px;
-    }
-
-    .home-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:13px;
-    }
-
-    .home-item{
-      min-height:150px;
-      padding:22px;
-      background:white;
-      border-radius:20px;
-      box-shadow:0 9px 22px rgba(18,59,39,.11);
-    }
-
-    .home-item .icon{
-      font-size:27px;
-    }
-
-    .home-item h3{
-      margin:20px 0 10px;
-      font-size:22px;
-    }
-
-    /* Refer */
-
-    .refer-link{
-      margin:15px 0;
-      padding:13px;
-      word-break:break-all;
-      background:#f0f5f2;
-      border-radius:11px;
-    }
-
-    .refer-button-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .share-button{
-      padding:13px 19px;
-      border:1px solid #cad8d0;
-      border-radius:14px;
-      background:white;
-      color:var(--text);
-      font-weight:800;
-    }
-
-    .stat-row{
-      display:flex;
-      justify-content:space-between;
-      padding:13px 0;
-      border-bottom:1px solid #e6eee9;
-    }
-
-    /* Wallet */
-
-    .wallet-card{
-      padding:32px 20px;
-      text-align:center;
-      color:white;
-      border-radius:22px;
-      background:linear-gradient(135deg,#08713f,#0ca35b);
-    }
-
-    .wallet-amount{
-      margin:12px 0 22px;
-      font-size:46px;
-      font-weight:900;
-    }
-
-    .withdraw-history{
-      margin-top:18px;
-    }
-
-    .history-row{
-      display:flex;
-      justify-content:space-between;
-      padding:13px 0;
-      border-bottom:1px solid #e6eee9;
-    }
-
-    .small{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    /* Profile */
-
-    .profile-name{
-      font-size:25px;
-      margin-bottom:15px;
-    }
-
-    .profile-menu{
-      width:100%;
-      margin-bottom:13px;
-      padding:19px;
-      border:0;
-      border-radius:17px;
-      background:white;
-      color:var(--text);
-      text-align:left;
-      font-size:18px;
-      box-shadow:0 8px 20px rgba(18,59,39,.11);
-    }
-
-    /* Bottom navigation */
-
-    .bottom-nav{
-      position:fixed;
-      bottom:0;
-      left:50%;
-      z-index:15;
-      width:min(520px,100%);
-      height:76px;
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      transform:translateX(-50%);
-      background:white;
-      border-top:1px solid #d8dfdb;
-    }
-
-    .nav-button{
-      border:0;
-      background:transparent;
-      color:#79847e;
-      font-weight:700;
-      font-size:12px;
-    }
-
-    .nav-button span{
-      display:block;
-      margin-bottom:3px;
-      font-size:22px;
-    }
-
-    .nav-button.active{
-      color:var(--green);
-    }
-
-    /* Modal */
-
-    .modal{
-      display:none;
-      position:fixed;
-      inset:0;
-      z-index:30;
-      padding:18px;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,.6);
-    }
-
-    .modal.show{
-      display:flex;
-    }
-
-    .modal-content{
-      width:min(460px,100%);
-      max-height:85vh;
-      overflow:auto;
-      padding:23px;
-      background:white;
-      border-radius:21px;
-    }
-
-    .modal-close{
-      float:right;
-      width:37px;
-      height:37px;
-      border:0;
-      border-radius:50%;
-      background:#edf3ef;
-      font-size:22px;
-    }
-
-    .modal-content h2{
-      margin-bottom:20px;
-    }
-
-    .modal-content li{
-      margin:0 0 12px 20px;
-      line-height:1.55;
-    }
-
-    /* Form */
-
-    .field{
-      margin-bottom:15px;
-    }
-
-    .field label{
-      display:block;
-      margin-bottom:7px;
-      font-weight:800;
-    }
-
-    .field input,
-    .field select{
-      width:100%;
-      padding:14px;
-      border:1px solid #c7d5cd;
-      border-radius:12px;
-      outline:none;
-    }
-
-    .field input:focus,
-    .field select:focus{
-      border-color:var(--green);
-    }
-
-    .error{
-      margin:12px 0;
-      color:var(--red);
-      font-weight:700;
-    }
-
-    .success{
-      margin:12px 0;
-      color:var(--green);
-      font-weight:700;
-    }
-
-    @media(max-width:360px){
-      .home-grid{
-        grid-template-columns:1fr;
-      }
-
-      .logo{
-        font-size:23px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SM Earn</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#f3f8f5;
+  color:#173c2b;
+  font-family:system-ui,"Noto Sans Bengali",sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+header{
+  background:linear-gradient(135deg,#075c38,#079650);
+  color:white;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:23px;
+  font-weight:800;
+}
+.gold{color:#ffd84d}
+.balance{
+  background:#ffffff25;
+  padding:9px 13px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+main{
+  max-width:600px;
+  margin:auto;
+  padding:16px 16px 95px;
+}
+.page{display:none}
+.page.active{display:block}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 5px 16px #11331c15;
+}
+
+.hero{
+  background:linear-gradient(135deg,#087a43,#11a45b);
+  color:white;
+  border-radius:22px;
+  padding:23px;
+  margin-bottom:20px;
+}
+.hero h1{margin-top:0}
+
+.btn{
+  border:0;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:700;
+}
+.primary{
+  background:#078b49;
+  color:white;
+}
+.yellow{
+  background:#ffd84d;
+  color:#183424;
+}
+.outline{
+  background:#eef8f2;
+  color:#087a43;
+  border:1px solid #9fd5b8;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.grid .card{margin:0}
+
+.notice{
+  background:#fff4ca;
+  color:#6a5200;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:14px;
+}
+
+.join-box{
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  text-align:center;
+  margin-top:15px;
+}
+.join-item{
+  border:1px solid #ddd;
+  padding:14px;
+  border-radius:14px;
+  margin:12px 0;
+}
+.join-item button{width:100%;margin-top:8px}
+
+.lock{
+  position:fixed;
+  inset:0;
+  background:#f3f8f5;
+  z-index:1000;
+  overflow:auto;
+  padding:25px 16px;
+}
+.lock.hidden{display:none}
+
+.ref-code{
+  font-size:22px;
+  font-weight:800;
+  color:#087a43;
+  background:#eaf7ef;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  margin:12px 0;
+}
+
+.ref-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:13px 0 6px;
+}
+input,select{
+  width:100%;
+  border:1px solid #ccd9d1;
+  border-radius:12px;
+  padding:13px;
+  background:white;
+}
+.error{
+  color:#c33030;
+  font-weight:700;
+  margin-top:10px;
+}
+.success{
+  color:#087a43;
+  font-weight:700;
+  margin-top:10px;
+}
+.big-balance{
+  font-size:40px;
+  font-weight:800;
+  margin:10px 0;
+}
+
+.profile-name{font-size:22px;font-weight:800}
+
+.support{
+  cursor:pointer;
+  color:#087a43;
+  font-weight:700;
+}
+
+nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:white;
+  border-top:1px solid #ddd;
+  display:flex;
+  z-index:100;
+  padding:7px 4px calc(7px + env(safe-area-inset-bottom));
+}
+nav button{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#78857e;
+  padding:6px 2px;
+  font-size:19px;
+}
+nav small{
+  display:block;
+  font-size:11px;
+}
+nav button.active{
+  color:#078b49;
+  font-weight:800;
+}
+</style>
 </head>
 
 <body>
 
-<div class="app">
+<header>
+  <div>
+    <div class="logo">💰 SM <span class="gold">Earn</span></div>
+    <small>Watch • Complete • Earn</small>
+  </div>
+  <div class="balance">৳0.00</div>
+</header>
 
-  <!-- Header -->
+<div id="joinLock" class="lock">
+  <div class="join-box">
+    <h2>🔐 SM Earn চালু করতে Join করুন</h2>
+    <p>
+      কাজ শুরু করার আগে নিচের Group এবং Channel-এ Join করতে হবে।
+    </p>
 
-  <header class="header">
-    <div>
-      <div class="logo">💰 SM Earn</div>
-      <div class="tagline">Watch • Complete • Earn</div>
-    </div>
-
-    <div class="header-balance" id="headerBalance">
-      ৳0.00
-    </div>
-  </header>
-
-  <!-- Home -->
-
-  <section class="page active" id="homePage">
-
-    <div class="hero">
-      <h1>ঘরে বসেই আয় করুন</h1>
-
-      <p>ভিডিও, সার্ভে ও সহজ কাজ সম্পন্ন করুন</p>
-
-      <button class="yellow-button" onclick="openPage('task')">
-        শুরু করুন
+    <div class="join-item">
+      <b>👥 TikTok Account Buy Sell</b>
+      <button class="btn primary"
+        onclick="openTelegram('https://t.me/tiktokaccountbaysell')">
+        Group-এ Join করুন
       </button>
     </div>
 
-    <h2 class="section-heading">জনপ্রিয় কাজ</h2>
-
-    <div class="home-grid">
-
-      <div class="home-item">
-        <div class="icon">▶️</div>
-        <h3>ভিডিও</h3>
-        <p>শিগগিরই আসছে</p>
-      </div>
-
-      <div class="home-item">
-        <div class="icon">📝</div>
-        <h3>সার্ভে</h3>
-        <p>অনুমোদনের অপেক্ষায়</p>
-      </div>
-
-      <div class="home-item">
-        <div class="icon">🎁</div>
-        <h3>ডেইলি বোনাস</h3>
-        <p>শিগগিরই আসছে</p>
-      </div>
-
-      <div class="home-item" onclick="openPage('refer')">
-        <div class="icon">👥</div>
-        <h3>রেফার</h3>
-        <p>প্রতি সফল রেফারে ৳৩</p>
-      </div>
-
+    <div class="join-item">
+      <b>📢 SM Earn 2026</b>
+      <button class="btn primary"
+        onclick="openTelegram('https://t.me/SMEarn2026')">
+        Channel-এ Join করুন
+      </button>
     </div>
-  </section>
 
-  <!-- Refer -->
+    <button class="btn yellow" style="width:100%"
+      onclick="verifyMembership()">
+      ✅ Join করেছি — যাচাই করুন
+    </button>
 
-  <section class="page" id="referPage">
+    <p id="joinStatus"></p>
+  </div>
+</div>
 
-    <h1 class="page-title">Refer & Earn</h1>
+<main>
 
+<section id="home" class="page active">
+  <div class="hero">
+    <h1>ঘরে বসেই আয় করুন</h1>
+    <p>ভিডিও, সার্ভে ও সহজ কাজ সম্পন্ন করুন।</p>
+    <button class="btn yellow" onclick="go('task')">
+      এখনই শুরু করুন
+    </button>
+  </div>
+
+  <h2>জনপ্রিয় কাজ</h2>
+
+  <div class="grid">
     <div class="card">
-      <h2>প্রতি সফল রেফারে ৳৩</h2>
-
-      <p style="margin-top:12px;line-height:1.6">
-        বন্ধুকে আপনার রেফারেল লিংক পাঠান। নতুন সদস্য নিবন্ধন
-        ও যাচাই সম্পন্ন করলে আপনার ব্যালেন্সে ৳৩ যোগ হবে।
-      </p>
-
-      <div class="refer-link" id="referralLink"></div>
-
-      <div class="refer-button-row">
-        <button class="yellow-button" id="copyReferralButton">
-          লিংক কপি করুন
-        </button>
-
-        <button class="share-button" id="shareReferralButton">
-          শেয়ার করুন
-        </button>
-      </div>
+      ▶️
+      <h3>ভিডিও</h3>
+      <small>শিগগিরই আসছে</small>
     </div>
 
     <div class="card">
-
-      <div class="stat-row">
-        <span>সফল রেফার</span>
-        <strong id="successfulReferral">0</strong>
-      </div>
-
-      <div class="stat-row">
-        <span>রেফার আয়</span>
-        <strong id="referralIncome">৳0.00</strong>
-      </div>
-
+      📝
+      <h3>সার্ভে</h3>
+      <small>Provider approval-এর অপেক্ষায়</small>
     </div>
+
+    <div class="card">
+      🎁
+      <h3>ডেইলি বোনাস</h3>
+      <small>শিগগিরই আসছে</small>
+    </div>
+
+    <div class="card" onclick="go('refer')">
+      👥
+      <h3>Refer & Earn</h3>
+      <small>বন্ধুদের আমন্ত্রণ করুন</small>
+    </div>
+  </div>
+</section>
+
+<section id="refer" class="page">
+  <h1>👥 Refer & Earn</h1>
+
+  <div class="card">
+    <h3>আপনার Referral Code</h3>
+
+    <div id="refCode" class="ref-code">
+      Loading...
+    </div>
+
+    <p style="text-align:center">
+      বন্ধুদের SM Earn Bot-এ আমন্ত্রণ করুন।
+    </p>
+
+    <div class="ref-buttons">
+      <button class="btn outline" onclick="copyReferral()">
+        📋 Copy
+      </button>
+
+      <button class="btn primary" onclick="shareReferral()">
+        📤 Share
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Referral Statistics</h3>
+    <p>Total Referrals: <b id="refCount">0</b></p>
+    <p>Referral Earnings: <b>৳0.00</b></p>
+  </div>
+
+  <div class="notice">
+    Referral commission প্রকৃত verified earning অনুযায়ী পরে নির্ধারণ করা হবে।
+  </div>
+</section>
+
+<section id="task" class="page">
+  <h1>✅ Tasks</h1>
+
+  <div class="card">
+    📝
+    <h3>Survey Tasks</h3>
+    <p>CPX Research approval-এর পরে survey এখানে দেখা যাবে।</p>
+  </div>
+
+  <div class="card">
+    ▶️
+    <h3>Video Tasks</h3>
+    <p>বৈধ rewarded video provider যুক্ত হলে এখানে video task আসবে।</p>
+  </div>
+</section>
+
+<section id="wallet" class="page">
+  <h1>💰 Wallet</h1>
+
+  <div class="card" style="text-align:center">
+    <small>বর্তমান ব্যালেন্স</small>
+    <div class="big-balance">৳0.00</div>
+
+    <button class="btn primary" onclick="showWithdraw()">
+      Withdraw
+    </button>
+  </div>
+
+  <div id="withdrawBox" class="card" style="display:none">
+    <h2>টাকা উত্তোলন</h2>
 
     <div class="notice">
-      নতুন সদস্যের অ্যাকাউন্ট যাচাই সম্পন্ন হওয়ার পর রেফার সফল
-      হিসেবে গণ্য হবে। ভুয়া, ডুপ্লিকেট ও নিজের রেফার গ্রহণ করা হবে না।
+      ⚠️ সর্বনিম্ন <b>৳250</b> না হলে টাকা উত্তোলন করা যাবে না।
     </div>
 
-  </section>
+    <label>Payment Method</label>
+    <select id="paymentMethod">
+      <option value="bKash">bKash</option>
+      <option value="Nagad">Nagad</option>
+    </select>
 
-  <!-- Task -->
+    <label>আপনার নম্বর</label>
+    <input
+      id="paymentNumber"
+      type="tel"
+      placeholder="01XXXXXXXXX"
+      maxlength="11"
+    >
 
-  <section class="page" id="taskPage">
+    <label>কত টাকা Withdraw করবেন?</label>
+    <input
+      id="withdrawAmount"
+      type="number"
+      placeholder="Minimum 250"
+      min="250"
+    >
 
-    <h1 class="page-title">Tasks</h1>
-
-    <div class="card">
-      <h2>📝 Survey Tasks</h2>
-
-      <p style="margin-top:10px">
-        Provider approval-এর পর যুক্ত হবে।
-      </p>
-    </div>
-
-    <div class="card">
-      <h2>▶️ Video Tasks</h2>
-
-      <p style="margin-top:10px">
-        Reward source যুক্ত হলে চালু হবে।
-      </p>
-    </div>
-
-  </section>
-
-  <!-- Wallet -->
-
-  <section class="page" id="walletPage">
-
-    <h1 class="page-title">Wallet</h1>
-
-    <div class="wallet-card">
-
-      <p>মোট ব্যালেন্স</p>
-
-      <div class="wallet-amount" id="walletBalance">
-        ৳0.00
-      </div>
-
-      <button class="yellow-button"
-              id="withdrawButton"
-              disabled>
-        Withdraw
-      </button>
-
-    </div>
-
-    <div class="notice">
-      অ্যাকাউন্টে ন্যূনতম ৳২৫০ হলে bKash অথবা Nagad-এর মাধ্যমে
-      টাকা তোলা যাবে। শুধুমাত্র যাচাইকৃত আয় Withdraw করা যাবে।
-    </div>
-
-    <div class="card withdraw-history">
-      <h2>Withdraw ইতিহাস</h2>
-
-      <div id="withdrawHistory"
-           class="small"
-           style="margin-top:15px">
-        এখনো কোনো Withdraw অনুরোধ নেই।
-      </div>
-    </div>
-
-  </section>
-
-  <!-- Profile -->
-
-  <section class="page" id="profilePage">
-
-    <h1 class="page-title">Profile</h1>
-
-    <div class="card">
-      <h2 class="profile-name">SM Earn Member</h2>
-      <p>Telegram Member</p>
-    </div>
-
-    <button class="profile-menu"
-            onclick="showModal('securityModal')">
-      🔐 Account Security
+    <button
+      class="btn primary"
+      style="width:100%;margin-top:15px"
+      onclick="submitWithdraw()">
+      Withdraw Request
     </button>
 
-    <button class="profile-menu"
-            onclick="contactSupport()">
-      ❓ Help & Support
-    </button>
-
-    <button class="profile-menu"
-            onclick="showModal('termsModal')">
-      ℹ️ Terms & Policies
-    </button>
-
-  </section>
-
-  <!-- Bottom Navigation -->
-
-  <nav class="bottom-nav">
-
-    <button class="nav-button active"
-            data-page="home"
-            onclick="openPage('home')">
-      <span>⌂</span>
-      Home
-    </button>
-
-    <button class="nav-button"
-            data-page="refer"
-            onclick="openPage('refer')">
-      <span>👥</span>
-      Refer
-    </button>
-
-    <button class="nav-button"
-            data-page="task"
-            onclick="openPage('task')">
-      <span>☑</span>
-      Task
-    </button>
-
-    <button class="nav-button"
-            data-page="wallet"
-            onclick="openPage('wallet')">
-      <span>▣</span>
-      Wallet
-    </button>
-
-    <button class="nav-button"
-            data-page="profile"
-            onclick="openPage('profile')">
-      <span>●</span>
-      Profile
-    </button>
-
-  </nav>
-
-</div>
-
-<!-- Security Modal -->
-
-<div class="modal" id="securityModal">
-
-  <div class="modal-content">
-
-    <button class="modal-close"
-            onclick="hideModal('securityModal')">
-      ×
-    </button>
-
-    <h2>🔐 Account Security</h2>
-
-    <ul>
-      <li>OTP, PIN এবং Password কারও সঙ্গে শেয়ার করবেন না।</li>
-
-      <li>
-        একই মোবাইল নম্বর অথবা ডিভাইস দিয়ে একাধিক অ্যাকাউন্ট
-        তৈরি করা যাবে না।
-      </li>
-
-      <li>
-        সন্দেহজনক কার্যকলাপ শনাক্ত হলে Withdraw সাময়িকভাবে
-        বন্ধ রাখা হতে পারে।
-      </li>
-
-      <li>
-        অন্য ব্যক্তির ডিভাইসে অ্যাকাউন্ট ব্যবহার করলে কাজ শেষে
-        অবশ্যই Log out করুন।
-      </li>
-
-      <li>
-        কোনো সমস্যা হলে Help & Support থেকে সরাসরি যোগাযোগ করুন।
-      </li>
-    </ul>
-
+    <div id="withdrawMessage"></div>
   </div>
-</div>
+</section>
 
-<!-- Terms Modal -->
+<section id="profile" class="page">
+  <h1>👤 Profile</h1>
 
-<div class="modal" id="termsModal">
+  <div class="card">
+    <div id="tgName" class="profile-name">
+      SM Earn Member
+    </div>
 
-  <div class="modal-content">
-
-    <button class="modal-close"
-            onclick="hideModal('termsModal')">
-      ×
-    </button>
-
-    <h2>ℹ️ Terms & Policies</h2>
-
-    <ul>
-      <li>প্রতি সফল ও যাচাইকৃত রেফারের জন্য ৳৩ যোগ হবে।</li>
-
-      <li>
-        ভুয়া, ডুপ্লিকেট অথবা নিজের রেফার গ্রহণযোগ্য হবে না।
-      </li>
-
-      <li>ন্যূনতম Withdraw পরিমাণ ৳২৫০।</li>
-
-      <li>পেমেন্ট মাধ্যম bKash এবং Nagad।</li>
-
-      <li>
-        ব্যবহারকারীকে সঠিক পেমেন্ট নম্বর দিতে হবে।
-      </li>
-
-      <li>
-        ভুল নম্বর দেওয়ার কারণে পেমেন্ট সমস্যার জন্য ব্যবহারকারী
-        দায়ী থাকবেন।
-      </li>
-
-      <li>
-        Withdraw অনুমোদনের আগে রেফার এবং আয় যাচাই করা হবে।
-      </li>
-
-      <li>
-        প্রতারণা অথবা সিস্টেম অপব্যবহার করলে অ্যাকাউন্ট স্থগিত
-        করা হতে পারে।
-      </li>
-    </ul>
-
+    <p id="tgId">Telegram ID</p>
+    <p id="tgUsername">@username</p>
   </div>
-</div>
 
-<!-- Withdraw Modal -->
-
-<div class="modal" id="withdrawModal">
-
-  <div class="modal-content">
-
-    <button class="modal-close"
-            onclick="hideModal('withdrawModal')">
-      ×
-    </button>
-
-    <h2>Withdraw করুন</h2>
-
-    <form id="withdrawForm">
-
-      <div class="field">
-        <label for="paymentMethod">পেমেন্ট মাধ্যম</label>
-
-        <select id="paymentMethod" required>
-          <option value="bKash">bKash</option>
-          <option value="Nagad">Nagad</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="paymentNumber">অ্যাকাউন্ট নম্বর</label>
-
-        <input type="tel"
-               id="paymentNumber"
-               maxlength="11"
-               inputmode="numeric"
-               placeholder="01XXXXXXXXX"
-               required>
-      </div>
-
-      <div class="field">
-        <label for="withdrawAmount">টাকার পরিমাণ</label>
-
-        <input type="number"
-               id="withdrawAmount"
-               min="250"
-               step="1"
-               placeholder="ন্যূনতম ২৫০ টাকা"
-               required>
-      </div>
-
-      <p id="withdrawMessage"></p>
-
-      <button type="submit" class="green-button">
-        Withdraw অনুরোধ পাঠান
-      </button>
-
-    </form>
-
+  <div class="card">
+    🔐 Account Security
   </div>
-</div>
+
+  <div class="card support"
+    onclick="openTelegram('https://t.me/kamrulislam2026')">
+    ❓ Help & Support — @kamrulislam2026
+  </div>
+
+  <div class="card">
+    ℹ️ Terms & Policies
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <button data-page="home" class="active" onclick="go('home')">
+    🏠<small>Home</small>
+  </button>
+
+  <button data-page="refer" onclick="go('refer')">
+    👥<small>Refer</small>
+  </button>
+
+  <button data-page="task" onclick="go('task')">
+    ✅<small>Task</small>
+  </button>
+
+  <button data-page="wallet" onclick="go('wallet')">
+    💰<small>Wallet</small>
+  </button>
+
+  <button data-page="profile" onclick="go('profile')">
+    👤<small>Profile</small>
+  </button>
+</nav>
 
 <script>
-  /*
-    Help & Support-এ এই Telegram account খুলবে।
-    Username ওয়েবসাইটের উপরে দেখাবে না।
-  */
+const API =
+  "https://sm-earn-api.kamrulhassan1234567890098.workers.dev";
 
-  const TELEGRAM_SUPPORT =
-    "https://t.me/kamrulislam2026";
+const tg = window.Telegram?.WebApp;
 
-  /*
-    অ্যাপের তথ্য ফোনের browser storage-এ থাকবে।
-  */
+if(tg){
+  tg.ready();
+  tg.expand();
+}
 
-  let appData = JSON.parse(
-    localStorage.getItem("smEarnData")
-  ) || {
-    balance: 0,
-    referrals: 0,
-    withdrawHistory: []
-  };
+const user = tg?.initDataUnsafe?.user || null;
 
-  /*
-    প্রত্যেক ব্যবহারকারীর জন্য একটি Demo Member ID।
-  */
+if(user){
+  const fullName =
+    [user.first_name,user.last_name]
+    .filter(Boolean)
+    .join(" ");
 
-  let memberId = localStorage.getItem("smEarnMemberId");
+  document.getElementById("tgName").textContent =
+    fullName || "SM Earn Member";
 
-  if (!memberId) {
-    memberId =
-      "SM" +
-      Math.random()
-        .toString(36)
-        .substring(2, 9)
-        .toUpperCase();
+  document.getElementById("tgId").textContent =
+    "Telegram ID: " + user.id;
 
-    localStorage.setItem("smEarnMemberId", memberId);
+  document.getElementById("tgUsername").textContent =
+    user.username
+      ? "@" + user.username
+      : "Username নেই";
+
+  document.getElementById("refCode").textContent =
+    "SM-" + user.id;
+}else{
+  document.getElementById("refCode").textContent =
+    "Telegram থেকে খুলুন";
+}
+
+function go(id){
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.toggle(
+      "active",
+      page.id === id
+    );
+  });
+
+  document.querySelectorAll("nav button").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.page === id
+    );
+  });
+
+  window.scrollTo(0,0);
+}
+
+function openTelegram(url){
+  if(tg?.openTelegramLink){
+    tg.openTelegramLink(url);
+  }else{
+    location.href = url;
+  }
+}
+
+async function verifyMembership(){
+  const status =
+    document.getElementById("joinStatus");
+
+  if(!user){
+    status.className = "error";
+    status.textContent =
+      "Telegram Mini App থেকে খুলুন।";
+    return;
   }
 
-  /*
-    Referral link তৈরি।
-    অনলাইনে Upload করার পর website address স্বয়ংক্রিয়ভাবে বসবে।
-  */
+  status.textContent = "যাচাই করা হচ্ছে...";
 
-  function createReferralLink() {
-    const normalUrl = window.location.href.split("?")[0];
-
-    return normalUrl + "?ref=" + memberId;
-  }
-
-  /*
-    টাকা Format।
-  */
-
-  function formatMoney(amount) {
-    return "৳" + Number(amount).toFixed(2);
-  }
-
-  /*
-    তথ্য Save।
-  */
-
-  function saveData() {
-    localStorage.setItem(
-      "smEarnData",
-      JSON.stringify(appData)
+  try{
+    const response = await fetch(
+      API + "/check-membership",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          userId:user.id
+        })
+      }
     );
 
-    updateScreen();
-  }
+    const data = await response.json();
 
-  /*
-    Screen Update।
-  */
-
-  function updateScreen() {
-    document.getElementById("headerBalance").textContent =
-      formatMoney(appData.balance);
-
-    document.getElementById("walletBalance").textContent =
-      formatMoney(appData.balance);
-
-    document.getElementById("successfulReferral").textContent =
-      appData.referrals;
-
-    document.getElementById("referralIncome").textContent =
-      formatMoney(appData.referrals * 3);
-
-    document.getElementById("referralLink").textContent =
-      createReferralLink();
-
-    const withdrawButton =
-      document.getElementById("withdrawButton");
-
-    withdrawButton.disabled = appData.balance < 250;
-
-    showWithdrawHistory();
-  }
-
-  /*
-    Page পরিবর্তন।
-  */
-
-  function openPage(pageName) {
-    document.querySelectorAll(".page").forEach(function(page) {
-      page.classList.remove("active");
-    });
-
-    document
-      .getElementById(pageName + "Page")
-      .classList.add("active");
-
-    document.querySelectorAll(".nav-button").forEach(function(button) {
-      button.classList.remove("active");
-
-      if (button.dataset.page === pageName) {
-        button.classList.add("active");
-      }
-    });
-
-    window.scrollTo(0, 0);
-  }
-
-  /*
-    Modal Open এবং Close।
-  */
-
-  function showModal(modalId) {
-    document
-      .getElementById(modalId)
-      .classList.add("show");
-  }
-
-  function hideModal(modalId) {
-    document
-      .getElementById(modalId)
-      .classList.remove("show");
-  }
-
-  /*
-    Help & Support চাপলে Telegram account খুলবে।
-  */
-
-  function contactSupport() {
-    window.location.href = TELEGRAM_SUPPORT;
-  }
-
-  /*
-    Referral Link Copy।
-  */
-
-  document
-    .getElementById("copyReferralButton")
-    .addEventListener("click", async function() {
-
-      const button = this;
-      const referralLink = createReferralLink();
-
-      try {
-        await navigator.clipboard.writeText(referralLink);
-
-        button.textContent = "কপি হয়েছে ✓";
-
-        setTimeout(function() {
-          button.textContent = "লিংক কপি করুন";
-        }, 1500);
-
-      } catch (error) {
-        prompt(
-          "এই লিংকটি কপি করুন:",
-          referralLink
-        );
-      }
-    });
-
-  /*
-    Referral Link Share।
-  */
-
-  document
-    .getElementById("shareReferralButton")
-    .addEventListener("click", async function() {
-
-      const referralLink = createReferralLink();
-
-      const shareInformation = {
-        title: "SM Earn",
-        text:
-          "SM Earn-এ যোগ দিন। সফল রেফারে রিওয়ার্ড পাওয়া যাবে।",
-        url: referralLink
-      };
-
-      if (navigator.share) {
-        try {
-          await navigator.share(shareInformation);
-        } catch (error) {
-          console.log("Share বন্ধ করা হয়েছে");
-        }
-      } else {
-        try {
-          await navigator.clipboard.writeText(referralLink);
-          alert("Referral link কপি হয়েছে।");
-        } catch (error) {
-          prompt("এই লিংকটি কপি করুন:", referralLink);
-        }
-      }
-    });
-
-  /*
-    Withdraw Button।
-  */
-
-  document
-    .getElementById("withdrawButton")
-    .addEventListener("click", function() {
-
-      if (appData.balance < 250) {
-        alert("Withdraw করতে ন্যূনতম ৳২৫০ প্রয়োজন।");
-        return;
-      }
-
-      showModal("withdrawModal");
-    });
-
-  /*
-    Withdraw Form।
-  */
-
-  document
-    .getElementById("withdrawForm")
-    .addEventListener("submit", function(event) {
-
-      event.preventDefault();
-
-      const paymentMethod =
-        document.getElementById("paymentMethod").value;
-
-      const paymentNumber =
-        document.getElementById("paymentNumber").value.trim();
-
-      const withdrawAmount =
-        Number(
-          document.getElementById("withdrawAmount").value
-        );
-
-      const message =
-        document.getElementById("withdrawMessage");
-
-      message.className = "error";
-
-      /*
-        বাংলাদেশি মোবাইল নম্বর যাচাই।
-      */
-
-      if (!/^01[0-9]{9}$/.test(paymentNumber)) {
-        message.textContent =
-          "সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।";
-
-        return;
-      }
-
-      if (withdrawAmount < 250) {
-        message.textContent =
-          "ন্যূনতম Withdraw পরিমাণ ৳২৫০।";
-
-        return;
-      }
-
-      if (withdrawAmount > appData.balance) {
-        message.textContent =
-          "আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই।";
-
-        return;
-      }
-
-      /*
-        ব্যালেন্স থেকে টাকা কমানো।
-      */
-
-      appData.balance =
-        appData.balance - withdrawAmount;
-
-      /*
-        Withdraw ইতিহাসে যুক্ত করা।
-      */
-
-      appData.withdrawHistory.unshift({
-        method: paymentMethod,
-        number: paymentNumber,
-        amount: withdrawAmount,
-        status: "Pending",
-        date: new Date().toLocaleString("bn-BD")
-      });
-
-      saveData();
-
-      message.className = "success";
-      message.textContent =
-        "Withdraw অনুরোধ সফলভাবে গ্রহণ করা হয়েছে।";
+    if(data.access){
+      status.className = "success";
+      status.textContent =
+        "✅ Verification successful";
 
       document
-        .getElementById("withdrawForm")
-        .reset();
+        .getElementById("joinLock")
+        .classList.add("hidden");
+    }else{
+      status.className = "error";
 
-      setTimeout(function() {
-        hideModal("withdrawModal");
-        message.textContent = "";
-      }, 1500);
-    });
-
-  /*
-    Withdraw History দেখানো।
-  */
-
-  function showWithdrawHistory() {
-    const historyBox =
-      document.getElementById("withdrawHistory");
-
-    if (appData.withdrawHistory.length === 0) {
-      historyBox.innerHTML =
-        "এখনো কোনো Withdraw অনুরোধ নেই।";
-
-      return;
+      if(!data.groupJoined && !data.channelJoined){
+        status.textContent =
+          "❌ Group এবং Channel দুটিতেই Join করুন।";
+      }else if(!data.groupJoined){
+        status.textContent =
+          "❌ Group-এ Join করা হয়নি।";
+      }else{
+        status.textContent =
+          "❌ Channel-এ Join করা হয়নি।";
+      }
     }
+  }catch(e){
+    status.className = "error";
+    status.textContent =
+      "Verification হয়নি। আবার চেষ্টা করুন।";
+  }
+}
 
-    historyBox.innerHTML =
-      appData.withdrawHistory
-        .map(function(item) {
-          return `
-            <div class="history-row">
+function referralURL(){
+  if(!user) return "";
 
-              <div>
-                <strong>${item.method}</strong><br>
-                ${item.number}<br>
-                <span class="small">${item.date}</span>
-              </div>
+  return (
+    "https://t.me/SMEarnBD_Bot" +
+    "?start=ref_" + user.id
+  );
+}
 
-              <div style="text-align:right">
-                <strong>${formatMoney(item.amount)}</strong><br>
-                <span class="small">${item.status}</span>
-              </div>
+async function copyReferral(){
+  const url = referralURL();
 
-            </div>
-          `;
-        })
-        .join("");
+  if(!url) return;
+
+  try{
+    await navigator.clipboard.writeText(url);
+    tg?.showAlert?.("Referral link কপি হয়েছে");
+  }catch(e){
+    tg?.showAlert?.(url);
+  }
+}
+
+function shareReferral(){
+  const url = referralURL();
+
+  if(!url) return;
+
+  const share =
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(url) +
+    "&text=" +
+    encodeURIComponent(
+      "SM Earn-এ Join করুন"
+    );
+
+  openTelegram(share);
+}
+
+function showWithdraw(){
+  document.getElementById(
+    "withdrawBox"
+  ).style.display = "block";
+
+  document.getElementById(
+    "withdrawBox"
+  ).scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
+function submitWithdraw(){
+  const method =
+    document.getElementById(
+      "paymentMethod"
+    ).value;
+
+  const number =
+    document.getElementById(
+      "paymentNumber"
+    ).value.trim();
+
+  const amount =
+    Number(
+      document.getElementById(
+        "withdrawAmount"
+      ).value
+    );
+
+  const msg =
+    document.getElementById(
+      "withdrawMessage"
+    );
+
+  msg.className = "";
+
+  if(!/^01\d{9}$/.test(number)){
+    msg.className = "error";
+    msg.textContent =
+      "সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।";
+    return;
   }
 
-  /*
-    Modal-এর বাইরের কালো অংশে চাপ দিলে Modal বন্ধ হবে।
-  */
-
-  document
-    .querySelectorAll(".modal")
-    .forEach(function(modal) {
-
-      modal.addEventListener("click", function(event) {
-        if (event.target === modal) {
-          modal.classList.remove("show");
-        }
-      });
-    });
-
-  /*
-    পরীক্ষা করার নিয়ম:
-
-    Browser Console-এ নিচেরটি লিখলে
-    একটি সফল রেফার এবং ৳৩ যোগ হবে:
-
-    addSuccessfulReferral()
-
-    এটি শুধু পরীক্ষা করার জন্য।
-  */
-
-  function addSuccessfulReferral() {
-    appData.referrals =
-      appData.referrals + 1;
-
-    appData.balance =
-      appData.balance + 3;
-
-    saveData();
-
-    alert("সফল রেফারের জন্য ৳৩ যোগ হয়েছে।");
+  if(!Number.isFinite(amount) || amount < 250){
+    msg.className = "error";
+    msg.textContent =
+      "সর্বনিম্ন ৳250 Withdraw করতে হবে।";
+    return;
   }
 
-  /*
-    প্রথমবার Screen Update।
-  */
+  msg.className = "success";
+  msg.textContent =
+    method +
+    " Withdraw form ঠিক আছে। " +
+    "Database যুক্ত হওয়ার পর request জমা হবে।";
+}
 
-  updateScreen();
+verifyMembership();
 </script>
 
 </body>
