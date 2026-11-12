@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SM Earn</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f3f7f4;
+ color:#173524;
+}
+header{
+ padding:18px;
+ background:linear-gradient(135deg,#064a2b,#0a8749);
+ color:#fff;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+header b{font-size:24px}
+header span{color:#ffd84b}
+
+main{
+ padding:16px 16px 90px;
+ max-width:650px;
+ margin:auto;
+}
+.page{display:none}
+.page.on{display:block}
+
+.hero,.card,.task{
+ background:#fff;
+ border-radius:20px;
+ padding:20px;
+ margin-bottom:14px;
+ box-shadow:0 5px 18px #0002;
+}
+.hero{
+ background:linear-gradient(135deg,#087942,#13a25d);
+ color:white;
+}
+button{
+ border:0;
+ border-radius:12px;
+ padding:12px 16px;
+ background:#ffd84b;
+ font-weight:bold;
+}
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+.grid .card{margin:0}
+
+.task{
+ display:flex;
+ gap:12px;
+ align-items:center;
+}
+.wallet{
+ text-align:center;
+ background:linear-gradient(135deg,#075b35,#0d9c55);
+ color:#fff;
+}
+.wallet strong{
+ display:block;
+ font-size:40px;
+ margin:15px;
+}
+.note{
+ background:#fff5c9;
+ padding:14px;
+ border-radius:14px;
+}
+
+nav{
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ display:flex;
+ background:#fff;
+ border-top:1px solid #ddd;
+ padding:7px;
+}
+nav button{
+ flex:1;
+ background:transparent;
+ color:#748079;
+ padding:6px;
+ font-size:18px;
+}
+nav button small{display:block}
+nav button.active{
+ color:#078243;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <b>💰 SM <span>Earn</span><small style="display:block;font-size:11px">Watch • Complete • Earn</small></b>
+ <div>৳0.00</div>
+</header>
+
+<main>
+
+<section id="home" class="page on">
+ <div class="hero">
+  <h1>ঘরে বসেই আয় করুন</h1>
+  <p>ভিডিও, সার্ভে ও সহজ কাজ সম্পন্ন করুন</p>
+  <button onclick="go('task')">শুরু করুন</button>
+ </div>
+
+ <h2>জনপ্রিয় কাজ</h2>
+
+ <div class="grid">
+  <div class="card">▶️<h3>ভিডিও</h3><small>শিগগিরই আসছে</small></div>
+  <div class="card">📝<h3>সার্ভে</h3><small>অনুমোদনের অপেক্ষায়</small></div>
+  <div class="card">🎁<h3>ডেইলি বোনাস</h3><small>শিগগিরই আসছে</small></div>
+  <div class="card">👥<h3>রেফার</h3><small>বন্ধুদের আমন্ত্রণ করুন</small></div>
+ </div>
+</section>
+
+<section id="refer" class="page">
+ <h1>Refer & Earn</h1>
+ <div class="card">
+  <p>আপনার Referral Link</p>
+  <b>SM Earn Referral</b><br><br>
+  <button>Copy Link</button>
+ </div>
+ <p class="note">কমিশনের হার প্রকৃত আয়ের হিসাব অনুযায়ী নির্ধারণ করা হবে।</p>
+</section>
+
+<section id="task" class="page">
+ <h1>Tasks</h1>
+
+ <div class="task">
+  📝
+  <div>
+   <b>Survey Tasks</b><br>
+   <small>Provider approval-এর পর যুক্ত হবে</small>
+  </div>
+ </div>
+
+ <div class="task">
+  ▶️
+  <div>
+   <b>Video Tasks</b><br>
+   <small>Reward source যুক্ত হলে চালু হবে</small>
+  </div>
+ </div>
+</section>
+
+<section id="wallet" class="page">
+ <h1>Wallet</h1>
+ <div class="card wallet">
+  <small>মোট ব্যালেন্স</small>
+  <strong>৳0.00</strong>
+  <button disabled>Withdraw</button>
+ </div>
+ <p class="note">Verified earning না হওয়া পর্যন্ত withdrawal বন্ধ থাকবে।</p>
+</section>
+
+<section id="profile" class="page">
+ <h1>Profile</h1>
+ <div class="card">
+  <h2>SM Earn Member</h2>
+  <p>Telegram Member</p>
+ </div>
+ <div class="card">🔐 Account Security</div>
+ <div class="card">❓ Help & Support</div>
+ <div class="card">ℹ️ Terms & Policies</div>
+</section>
+
+</main>
+
+<nav>
+ <button class="active" data-id="home" onclick="go('home')">⌂<small>Home</small></button>
+ <button data-id="refer" onclick="go('refer')">👥<small>Refer</small></button>
+ <button data-id="task" onclick="go('task')">☑<small>Task</small></button>
+ <button data-id="wallet" onclick="go('wallet')">▣<small>Wallet</small></button>
+ <button data-id="profile" onclick="go('profile')">●<small>Profile</small></button>
+</nav>
+
+<script>
+function go(id){
+ document.querySelectorAll('.page').forEach(function(p){
+  p.classList.toggle('on',p.id===id);
+ });
+ document.querySelectorAll('nav button').forEach(function(b){
+  b.classList.toggle('active',b.dataset.id===id);
+ });
+ window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
