@@ -1,74 +1,210 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>SM Earn</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f3f8f5;color:#173c2b;font-family:system-ui,"Noto Sans Bengali",sans-serif}
+
+body{
+margin:0;
+background:#f3f8f5;
+color:#173c2b;
+font-family:system-ui,"Noto Sans Bengali",sans-serif;
+}
+
 button,input,select{font:inherit}
 button{cursor:pointer}
-header{background:linear-gradient(135deg,#075c38,#079650);color:white;padding:18px;display:flex;justify-content:space-between;align-items:center}
+
+header{
+background:linear-gradient(135deg,#075c38,#079650);
+color:white;
+padding:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
 .logo{font-size:23px;font-weight:800}
 .gold{color:#ffd84d}
-.balance{background:#ffffff25;padding:9px 13px;border-radius:20px;font-weight:700}
-main{max-width:600px;margin:auto;padding:16px 16px 95px}
+
+.balance{
+background:#ffffff25;
+padding:9px 13px;
+border-radius:20px;
+font-weight:700;
+}
+
+main{
+max-width:600px;
+margin:auto;
+padding:16px 16px 95px;
+}
+
 .page{display:none}
 .page.active{display:block}
-.card{background:white;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 5px 16px #11331c15}
-.hero{background:linear-gradient(135deg,#087a43,#11a45b);color:white;border-radius:22px;padding:23px;margin-bottom:20px}
+
+.card{
+background:white;
+border-radius:18px;
+padding:18px;
+margin-bottom:14px;
+box-shadow:0 5px 16px #11331c15;
+}
+
+.hero{
+background:linear-gradient(135deg,#087a43,#11a45b);
+color:white;
+border-radius:22px;
+padding:23px;
+margin-bottom:20px;
+}
+
 .hero h1{margin-top:0}
-.btn{border:0;padding:12px 16px;border-radius:12px;font-weight:700}
+
+.btn{
+border:0;
+padding:12px 16px;
+border-radius:12px;
+font-weight:700;
+}
+
 .primary{background:#078b49;color:white}
 .yellow{background:#ffd84d;color:#183424}
-.outline{background:#eef8f2;color:#087a43;border:1px solid #9fd5b8}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.outline{
+background:#eef8f2;
+color:#087a43;
+border:1px solid #9fd5b8;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
 .grid .card{margin:0}
-.notice{background:#fff4ca;color:#6a5200;padding:14px;border-radius:14px;margin-bottom:14px}
-.ref-code{font-size:22px;font-weight:800;color:#087a43;background:#eaf7ef;border-radius:12px;padding:12px;text-align:center;margin:12px 0}
-.ref-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-label{display:block;font-weight:700;margin:13px 0 6px}
-input,select{width:100%;border:1px solid #ccd9d1;border-radius:12px;padding:13px;background:white}
-.error{color:#c33030;font-weight:700;margin-top:10px}
-.success{color:#087a43;font-weight:700;margin-top:10px}
-.big-balance{font-size:40px;font-weight:800;margin:10px 0}
-.profile-name{font-size:22px;font-weight:800}
-.support{cursor:pointer;color:#087a43;font-weight:700}
 
-/* JOIN POPUP */
-.lock{
-position:fixed;inset:0;background:#090609f5;
-z-index:1000;overflow:auto;padding:20px 16px;
-display:flex;align-items:center;justify-content:center;
+.notice{
+background:#fff4ca;
+color:#6a5200;
+padding:14px;
+border-radius:14px;
+margin-bottom:14px;
+line-height:1.6;
 }
-.lock.hidden{display:none}
-.join-box{
-width:100%;max-width:420px;
-background:linear-gradient(145deg,#18090c,#270b11);
-color:white;padding:23px 18px;
-border:1px solid #a91b32;border-radius:20px;
-text-align:center;box-shadow:0 10px 35px #0008;
-}
-.join-box h2{color:#ff4055;font-size:22px}
-.join-box p{color:#ddd;line-height:1.6}
-.join-item{
-background:#301017;border:1px solid #742033;
-padding:15px;border-radius:14px;margin:14px 0;color:white;
-}
-.join-item button{width:100%;margin-top:12px;background:#e5092d;color:white}
-.join-item button.joined{background:#078b49;color:white}
-.verify-btn{width:100%;background:#ffd84d;color:#183424;margin-top:12px}
-#joinStatus.success{color:#00e69a}
-#joinStatus.error{color:#ff5265}
 
-nav{position:fixed;left:0;right:0;bottom:0;background:white;border-top:1px solid #ddd;display:flex;z-index:100;padding:7px 4px calc(7px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:0;background:transparent;color:#78857e;padding:6px 2px;font-size:19px}
-nav small{display:block;font-size:11px}
-nav button.active{color:#078b49;font-weight:800}
+.ref-code{
+font-size:18px;
+font-weight:800;
+color:#087a43;
+background:#eaf7ef;
+border-radius:12px;
+padding:12px;
+text-align:center;
+margin:12px 0;
+overflow-wrap:anywhere;
+}
+
+.ref-buttons{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.ref-reward{
+background:linear-gradient(135deg,#087a43,#11a45b);
+color:white;
+border-radius:16px;
+padding:17px;
+text-align:center;
+margin:15px 0;
+}
+
+.ref-reward .amount{
+font-size:30px;
+font-weight:900;
+color:#ffd84d;
+}
+
+label{
+display:block;
+font-weight:700;
+margin:13px 0 6px;
+}
+
+input,select{
+width:100%;
+border:1px solid #ccd9d1;
+border-radius:12px;
+padding:13px;
+background:white;
+}
+
+.error{
+color:#c33030;
+font-weight:700;
+margin-top:10px;
+}
+
+.success{
+color:#087a43;
+font-weight:700;
+margin-top:10px;
+}
+
+.big-balance{
+font-size:40px;
+font-weight:800;
+margin:10px 0;
+}
+
+.profile-name{
+font-size:22px;
+font-weight:800;
+}
+
+.support{
+cursor:pointer;
+color:#087a43;
+font-weight:700;
+}
+
+nav{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+background:white;
+border-top:1px solid #ddd;
+display:flex;
+z-index:100;
+padding:7px 4px calc(7px + env(safe-area-inset-bottom));
+}
+
+nav button{
+flex:1;
+border:0;
+background:transparent;
+color:#78857e;
+padding:6px 2px;
+font-size:19px;
+}
+
+nav small{
+display:block;
+font-size:11px;
+}
+
+nav button.active{
+color:#078b49;
+font-weight:800;
+}
 </style>
 </head>
 
@@ -76,132 +212,315 @@ nav button.active{color:#078b49;font-weight:800}
 
 <header>
 <div>
-<div class="logo">💰 SM <span class="gold">Earn</span></div>
+<div class="logo">
+💰 SM <span class="gold">Earn</span>
+</div>
 <small>Watch • Complete • Earn</small>
 </div>
-<div class="balance">৳0.00</div>
+
+<div class="balance" id="topBalance">
+৳0.00
+</div>
 </header>
-
-<!-- JOIN POPUP -->
-<div id="joinLock" class="lock">
-<div class="join-box">
-<h2>🔐 JOIN OUR TELEGRAM CHANNELS</h2>
-<p>SM Earn ব্যবহার করতে নিচের Group এবং Channel-এ Join করুন।</p>
-
-<div class="join-item">
-<b>👥 TikTok Account Buy Sell</b>
-<button id="groupJoinBtn" class="btn"
-onclick="openTelegram('https://t.me/tiktokaccountbaysell')">
-✈️ JOIN GROUP
-</button>
-</div>
-
-<div class="join-item">
-<b>📢 SM Earn 2026</b>
-<button id="channelJoinBtn" class="btn"
-onclick="openTelegram('https://t.me/SMEarn2026')">
-✈️ JOIN CHANNEL
-</button>
-</div>
-
-<button class="btn verify-btn" onclick="verifyMembership()">
-✅ VERIFY MEMBERSHIP
-</button>
-
-<p id="joinStatus">দুইটিতে Join করার পর Verify করুন।</p>
-</div>
-</div>
 
 <main>
 
+<!-- HOME -->
 <section id="home" class="page active">
+
 <div class="hero">
 <h1>ঘরে বসেই আয় করুন</h1>
 <p>ভিডিও, সার্ভে ও সহজ কাজ সম্পন্ন করুন।</p>
-<button class="btn yellow" onclick="go('task')">এখনই শুরু করুন</button>
+
+<button class="btn yellow" onclick="go('task')">
+এখনই শুরু করুন
+</button>
 </div>
+
 <h2>জনপ্রিয় কাজ</h2>
+
 <div class="grid">
-<div class="card">▶️<h3>ভিডিও</h3><small>শিগগিরই আসছে</small></div>
-<div class="card">📝<h3>সার্ভে</h3><small>Provider approval-এর অপেক্ষায়</small></div>
-<div class="card">🎁<h3>ডেইলি বোনাস</h3><small>শিগগিরই আসছে</small></div>
-<div class="card" onclick="go('refer')">👥<h3>Refer & Earn</h3><small>বন্ধুদের আমন্ত্রণ করুন</small></div>
+
+<div class="card">
+▶️
+<h3>ভিডিও</h3>
+<small>শিগগিরই আসছে</small>
+</div>
+
+<div class="card">
+📝
+<h3>সার্ভে</h3>
+<small>Provider approval-এর অপেক্ষায়</small>
+</div>
+
+<div class="card">
+🎁
+<h3>ডেইলি বোনাস</h3>
+<small>শিগগিরই আসছে</small>
+</div>
+
+<div class="card" onclick="go('refer')">
+👥
+<h3>Refer & Earn</h3>
+<small>বন্ধুদের আমন্ত্রণ করুন</small>
+</div>
+
 </div>
 </section>
 
+
+<!-- REFER -->
 <section id="refer" class="page">
+
 <h1>👥 Refer & Earn</h1>
+
 <div class="card">
-<h3>আপনার Referral Code</h3>
-<div id="refCode" class="ref-code">Loading...</div>
-<p style="text-align:center">বন্ধুদের SM Earn Bot-এ আমন্ত্রণ করুন।</p>
+
+<h3 style="text-align:center">
+🔗 আপনার Referral Link
+</h3>
+
+<p style="text-align:center">
+আপনার বিশেষ Referral Link বন্ধুদের কাছে শেয়ার করুন।
+</p>
+
+<div id="refCode" class="ref-code">
+Loading...
+</div>
+
+<div class="ref-reward">
+<div>🎁 প্রতি সফল Referral-এর জন্য</div>
+<div class="amount">৳5</div>
+<div>আপনার অ্যাকাউন্টে যোগ হবে</div>
+</div>
+
 <div class="ref-buttons">
-<button class="btn outline" onclick="copyReferral()">📋 Copy</button>
-<button class="btn primary" onclick="shareReferral()">📤 Share</button>
+
+<button
+class="btn outline"
+onclick="copyReferral()">
+📋 লিংক কপি করুন
+</button>
+
+<button
+class="btn primary"
+onclick="shareReferral()">
+📤 বন্ধুদের কাছে শেয়ার করুন
+</button>
+
 </div>
 </div>
+
+
 <div class="card">
-<h3>Referral Statistics</h3>
-<p>Total Referrals: <b id="refCount">0</b></p>
-<p>Referral Earnings: <b>৳0.00</b></p>
+
+<h3>📊 Referral Statistics</h3>
+
+<p>
+👥 মোট Referral:
+<b id="refCount">0</b>
+</p>
+
+<p>
+💰 Referral থেকে আয়:
+<b id="refEarnings">৳0.00</b>
+</p>
+
 </div>
-<div class="notice">Referral commission প্রকৃত verified earning অনুযায়ী পরে নির্ধারণ করা হবে।</div>
+
+<div class="notice">
+ℹ️ সফল Referral যাচাই হওয়ার পর Referral Reward প্রযোজ্য হবে।
+</div>
+
 </section>
 
+
+<!-- TASK -->
 <section id="task" class="page">
+
 <h1>✅ Tasks</h1>
-<div class="card">📝<h3>Survey Tasks</h3><p>CPX Research approval-এর পরে survey এখানে দেখা যাবে।</p></div>
-<div class="card">▶️<h3>Video Tasks</h3><p>বৈধ rewarded video provider যুক্ত হলে এখানে video task আসবে।</p></div>
+
+<div class="card">
+📝
+<h3>Survey Tasks</h3>
+<p>
+CPX Research approval-এর পরে survey এখানে দেখা যাবে।
+</p>
+</div>
+
+<div class="card">
+▶️
+<h3>Video Tasks</h3>
+<p>
+বৈধ rewarded video provider যুক্ত হলে এখানে video task আসবে।
+</p>
+</div>
+
 </section>
 
+
+<!-- WALLET -->
 <section id="wallet" class="page">
+
 <h1>💰 Wallet</h1>
+
 <div class="card" style="text-align:center">
+
 <small>বর্তমান ব্যালেন্স</small>
-<div class="big-balance">৳0.00</div>
-<button class="btn primary" onclick="showWithdraw()">Withdraw</button>
+
+<div class="big-balance" id="walletBalance">
+৳0.00
 </div>
-<div id="withdrawBox" class="card" style="display:none">
-<h2>টাকা উত্তোলন</h2>
-<div class="notice">⚠️ সর্বনিম্ন <b>৳250</b> না হলে টাকা উত্তোলন করা যাবে না।</div>
+
+<div class="notice">
+💳 Minimum Withdraw: <b>৳500</b>
+</div>
+
+<button
+class="btn primary"
+onclick="showWithdraw()">
+💸 Withdraw
+</button>
+
+</div>
+
+
+<div
+id="withdrawBox"
+class="card"
+style="display:none">
+
+<h2>💸 টাকা উত্তোলন</h2>
+
+<div class="notice">
+⚠️ আপনার ব্যালেন্স সর্বনিম্ন <b>৳500</b> হলে Withdraw করতে পারবেন।
+</div>
+
 <label>Payment Method</label>
+
 <select id="paymentMethod">
 <option value="bKash">bKash</option>
 <option value="Nagad">Nagad</option>
 </select>
-<label>আপনার নম্বর</label>
-<input id="paymentNumber" type="tel" placeholder="01XXXXXXXXX" maxlength="11">
+
+<label>আপনার মোবাইল নম্বর</label>
+
+<input
+id="paymentNumber"
+type="tel"
+inputmode="numeric"
+placeholder="01XXXXXXXXX"
+maxlength="11">
+
 <label>কত টাকা Withdraw করবেন?</label>
-<input id="withdrawAmount" type="number" placeholder="Minimum 250" min="250">
-<button class="btn primary" style="width:100%;margin-top:15px" onclick="submitWithdraw()">Withdraw Request</button>
+
+<input
+id="withdrawAmount"
+type="number"
+inputmode="numeric"
+placeholder="Minimum 500"
+min="500"
+step="1">
+
+<button
+class="btn primary"
+style="width:100%;margin-top:15px"
+onclick="submitWithdraw()">
+💸 Withdraw Request
+</button>
+
 <div id="withdrawMessage"></div>
+
 </div>
 </section>
 
+
+<!-- PROFILE -->
 <section id="profile" class="page">
+
 <h1>👤 Profile</h1>
+
 <div class="card">
-<div id="tgName" class="profile-name">SM Earn Member</div>
-<p id="tgId">Telegram ID</p>
-<p id="tgUsername">@username</p>
+
+<div
+id="tgName"
+class="profile-name">
+SM Earn Member
 </div>
-<div class="card">🔐 Account Security</div>
-<div class="card support" onclick="openTelegram('https://t.me/kamrulislam2026')">✅ Help & Support 💯</div>
-<div class="card">ℹ️ Terms & Policies</div>
+
+<p id="tgId">
+Telegram ID
+</p>
+
+<p id="tgUsername">
+@username
+</p>
+
+</div>
+
+<div class="card">
+🔐 Account Security
+</div>
+
+<div
+class="card support"
+onclick="openTelegram('https://t.me/kamrulislam2026')">
+✅ Help & Support 💯
+</div>
+
+<div class="card">
+ℹ️ Terms & Policies
+</div>
+
 </section>
 
 </main>
 
+
+<!-- BOTTOM NAVIGATION -->
 <nav>
-<button data-page="home" class="active" onclick="go('home')">🏠<small>Home</small></button>
-<button data-page="refer" onclick="go('refer')">👥<small>Refer</small></button>
-<button data-page="task" onclick="go('task')">✅<small>Task</small></button>
-<button data-page="wallet" onclick="go('wallet')">💰<small>Wallet</small></button>
-<button data-page="profile" onclick="go('profile')">👤<small>Profile</small></button>
+
+<button
+data-page="home"
+class="active"
+onclick="go('home')">
+🏠
+<small>Home</small>
+</button>
+
+<button
+data-page="refer"
+onclick="go('refer')">
+👥
+<small>Refer</small>
+</button>
+
+<button
+data-page="task"
+onclick="go('task')">
+✅
+<small>Task</small>
+</button>
+
+<button
+data-page="wallet"
+onclick="go('wallet')">
+💰
+<small>Wallet</small>
+</button>
+
+<button
+data-page="profile"
+onclick="go('profile')">
+👤
+<small>Profile</small>
+</button>
+
 </nav>
 
+
 <script>
-const API = "https://sm-earn-api.kamrulhassan1234567890098.workers.dev";
+
 const tg = window.Telegram?.WebApp;
 
 if(tg){
@@ -209,143 +528,280 @@ tg.ready();
 tg.expand();
 }
 
-const user = tg?.initDataUnsafe?.user || null;
+const user =
+tg?.initDataUnsafe?.user || null;
+
+
+/* TELEGRAM PROFILE */
 
 if(user){
-const fullName = [user.first_name,user.last_name].filter(Boolean).join(" ");
-document.getElementById("tgName").textContent = fullName || "SM Earn Member";
-document.getElementById("tgId").textContent = "Telegram ID: " + user.id;
-document.getElementById("tgUsername").textContent = user.username ? "@" + user.username : "Username নেই";
-document.getElementById("refCode").textContent = "SM-" + user.id;
+
+const fullName = [
+user.first_name,
+user.last_name
+]
+.filter(Boolean)
+.join(" ");
+
+document
+.getElementById("tgName")
+.textContent =
+fullName || "SM Earn Member";
+
+document
+.getElementById("tgId")
+.textContent =
+"Telegram ID: " + user.id;
+
+document
+.getElementById("tgUsername")
+.textContent =
+user.username
+? "@" + user.username
+: "Username নেই";
+
+document
+.getElementById("refCode")
+.textContent =
+referralURL();
+
 }else{
-document.getElementById("refCode").textContent = "Telegram থেকে খুলুন";
+
+document
+.getElementById("refCode")
+.textContent =
+"Telegram Bot থেকে খুলুন";
+
 }
+
+
+/* NAVIGATION */
 
 function go(id){
-document.querySelectorAll(".page").forEach(page=>{
-page.classList.toggle("active",page.id===id);
+
+document
+.querySelectorAll(".page")
+.forEach(page=>{
+
+page.classList.toggle(
+"active",
+page.id===id
+);
+
 });
-document.querySelectorAll("nav button").forEach(btn=>{
-btn.classList.toggle("active",btn.dataset.page===id);
+
+document
+.querySelectorAll("nav button")
+.forEach(btn=>{
+
+btn.classList.toggle(
+"active",
+btn.dataset.page===id
+);
+
 });
+
 window.scrollTo(0,0);
+
 }
+
+
+/* TELEGRAM LINKS */
 
 function openTelegram(url){
+
 if(tg?.openTelegramLink){
+
 tg.openTelegramLink(url);
+
 }else{
+
 window.open(url,"_blank");
-}
-}
 
-async function verifyMembership(){
-const status=document.getElementById("joinStatus");
-const groupBtn=document.getElementById("groupJoinBtn");
-const channelBtn=document.getElementById("channelJoinBtn");
-
-if(!user){
-status.className="error";
-status.textContent="Telegram Mini App থেকে খুলুন।";
-return;
 }
 
-status.className="";
-status.textContent="⏳ Membership যাচাই হচ্ছে...";
-
-try{
-const response=await fetch(API+"/check-membership",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({userId:user.id})
-});
-
-if(!response.ok) throw new Error("API error");
-
-const data=await response.json();
-
-groupBtn.textContent=data.groupJoined===true?"✅ GROUP JOINED":"✈️ JOIN GROUP";
-groupBtn.classList.toggle("joined",data.groupJoined===true);
-
-channelBtn.textContent=data.channelJoined===true?"✅ CHANNEL JOINED":"✈️ JOIN CHANNEL";
-channelBtn.classList.toggle("joined",data.channelJoined===true);
-
-if(data.access===true && data.groupJoined===true && data.channelJoined===true){
-status.className="success";
-status.textContent="🎉 সফল! আপনি দুইটিতেই Join করেছেন।";
-document.getElementById("joinLock").classList.add("hidden");
-}else{
-status.className="error";
-if(data.groupJoined!==true && data.channelJoined!==true){
-status.textContent="❌ Group Join করুন।";
-}else if(data.groupJoined!==true){
-status.textContent="❌ Group-এ Join করা হয়নি।";
 }
-}
-}
-}catch(error){
-status.className="error";
-status.textContent="⚠️ যাচাই করা যায়নি। আবার চেষ্টা করুন।";
-}
-}
+
+
+/* REFERRAL LINK */
 
 function referralURL(){
-if(!user)return "";
-return "https://t.me/SMEarnBD_Bot?start=ref_"+user.id;
+
+if(!user){
+return "";
 }
+
+return "https://t.me/SMEarnBD_Bot?start=ref_"+user.id;
+
+}
+
+
+/* COPY REFERRAL */
 
 async function copyReferral(){
-const url=referralURL();
-if(!url)return;
+
+const url = referralURL();
+
+if(!url){
+
+tg?.showAlert?.(
+"Telegram Bot থেকে SM Earn খুলুন।"
+);
+
+return;
+
+}
+
 try{
+
 await navigator.clipboard.writeText(url);
-tg?.showAlert?.("Referral link কপি হয়েছে");
-}catch(e){
+
+tg?.showAlert?.(
+"Referral Link কপি হয়েছে ✅"
+);
+
+}catch(error){
+
 tg?.showAlert?.(url);
+
 }
+
 }
+
+
+/* SHARE REFERRAL */
 
 function shareReferral(){
-const url=referralURL();
-if(!url)return;
-const share="https://t.me/share/url?url="+encodeURIComponent(url)+"&text="+encodeURIComponent("SM Earn-এ Join করুন");
-openTelegram(share);
+
+const url = referralURL();
+
+if(!url){
+
+tg?.showAlert?.(
+"Telegram Bot থেকে SM Earn খুলুন।"
+);
+
+return;
+
 }
+
+const text =
+"💰 SM Earn-এ Join করুন!\n\n"
++
+"🎁 আমার Referral Link দিয়ে Join করুন।\n"
++
+"📲 নিচের লিংকে চাপ দিয়ে শুরু করুন:";
+
+const share =
+"https://t.me/share/url?url="
++
+encodeURIComponent(url)
++
+"&text="
++
+encodeURIComponent(text);
+
+openTelegram(share);
+
+}
+
+
+/* WITHDRAW BOX */
 
 function showWithdraw(){
-const box=document.getElementById("withdrawBox");
-box.style.display="block";
-box.scrollIntoView({behavior:"smooth"});
+
+const box =
+document.getElementById(
+"withdrawBox"
+);
+
+box.style.display =
+"block";
+
+box.scrollIntoView({
+behavior:"smooth"
+});
+
 }
+
+
+/* WITHDRAW VALIDATION */
 
 function submitWithdraw(){
-const method=document.getElementById("paymentMethod").value;
-const number=document.getElementById("paymentNumber").value.trim();
-const amount=Number(document.getElementById("withdrawAmount").value);
-const msg=document.getElementById("withdrawMessage");
 
-msg.className="";
+const method =
+document.getElementById(
+"paymentMethod"
+).value;
+
+const number =
+document.getElementById(
+"paymentNumber"
+).value.trim();
+
+const amount =
+Number(
+document.getElementById(
+"withdrawAmount"
+).value
+);
+
+const msg =
+document.getElementById(
+"withdrawMessage"
+);
+
+msg.className = "";
+
+
+/* MOBILE NUMBER */
 
 if(!/^01\d{9}$/.test(number)){
-msg.className="error";
-msg.textContent="সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।";
+
+msg.className =
+"error";
+
+msg.textContent =
+"❌ সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।";
+
 return;
+
 }
 
-if(!Number.isFinite(amount)||amount<250){
-msg.className="error";
-msg.textContent="সর্বনিম্ন ৳250 Withdraw করতে হবে।";
+
+/* MINIMUM ৳500 */
+
+if(
+!Number.isFinite(amount)
+||
+amount < 500
+){
+
+msg.className =
+"error";
+
+msg.textContent =
+"❌ সর্বনিম্ন ৳500 Withdraw করতে হবে।";
+
 return;
+
 }
 
-msg.className="success";
-msg.textContent=method+" Withdraw form ঠিক আছে। Database যুক্ত হওয়ার পর request জমা হবে।";
+
+/* DEMO ONLY */
+
+msg.className =
+"success";
+
+msg.textContent =
+"✅ "
++
+method
++
+" Withdraw তথ্য ঠিক আছে। Real withdrawal system যুক্ত হলে request জমা হবে.";
+
 }
 
-// Telegram Mini App থেকে সদস্য যাচাই
-if(user){
-verifyMembership();
-}
 </script>
 
 </body>
