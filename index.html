@@ -563,6 +563,28 @@ async function verifyMembership(){
   }
 }
 
+// ক্লাউডফ্লেয়ার এপিআইতে রেফারেল ডাটা পাঠানোর ফাংশন যুক্ত করা হলো
+async function sendReferralData(referralCode) {
+  try {
+    const response = await fetch(API + "/api/referral", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        referral_code: referralCode
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      console.log("সফলভাবে ব্যালেন্স আপডেট হয়েছে!");
+    }
+  } catch (error) {
+    console.error("এপিআই কানেক্ট করতে সমস্যা হয়েছে:", error);
+  }
+}
+
 function referralURL(){
   if(!user) return "";
 
@@ -648,7 +670,7 @@ function submitWithdraw(){
   if(!Number.isFinite(amount) || amount < 250){
     msg.className = "error";
     msg.textContent =
-      "সর্বনিম্ন ৳800 Withdraw করতে হবে।";
+      "সর্বনিম্ন ৳250 Withdraw করতে হবে।";
     return;
   }
 
