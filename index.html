@@ -277,11 +277,10 @@ document.getElementById("joinLock").classList.add("hidden");
 }else{
 status.className="error";
 if(data.groupJoined!==true && data.channelJoined!==true){
-status.textContent="❌ Group এবং Channel দুটিতেই Join করুন।";
+status.textContent="❌ Group Join করুন।";
 }else if(data.groupJoined!==true){
 status.textContent="❌ Group-এ Join করা হয়নি।";
-}else{
-status.textContent="❌ Channel-এ Join করা হয়নি।";
+}
 }
 }
 }catch(error){
