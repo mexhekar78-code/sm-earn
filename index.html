@@ -100,8 +100,8 @@ line-height:1.6;
 }
 
 .ref-code{
-font-size:18px;
-font-weight:800;
+font-size:15px;
+font-weight:700;
 color:#087a43;
 background:#eaf7ef;
 border-radius:12px;
@@ -109,6 +109,7 @@ padding:12px;
 text-align:center;
 margin:12px 0;
 overflow-wrap:anywhere;
+user-select:all;
 }
 
 .ref-buttons{
@@ -127,9 +128,10 @@ margin:15px 0;
 }
 
 .ref-reward .amount{
-font-size:30px;
-font-weight:900;
+font-size:22px;
+font-weight:800;
 color:#ffd84d;
+margin:5px 0;
 }
 
 label{
@@ -218,9 +220,7 @@ font-weight:800;
 <small>Watch • Complete • Earn</small>
 </div>
 
-<div class="balance" id="topBalance">
-৳0.00
-</div>
+<div class="balance" id="topBalance">৳0.00</div>
 </header>
 
 <main>
@@ -268,7 +268,6 @@ font-weight:800;
 </div>
 </section>
 
-
 <!-- REFER -->
 <section id="refer" class="page">
 
@@ -297,12 +296,14 @@ Loading...
 <div class="ref-buttons">
 
 <button
+type="button"
 class="btn outline"
 onclick="copyReferral()">
 📋 লিংক কপি করুন
 </button>
 
 <button
+type="button"
 class="btn primary"
 onclick="shareReferral()">
 📤 বন্ধুদের কাছে শেয়ার করুন
@@ -310,7 +311,6 @@ onclick="shareReferral()">
 
 </div>
 </div>
-
 
 <div class="card">
 
@@ -329,11 +329,10 @@ onclick="shareReferral()">
 </div>
 
 <div class="notice">
-ℹ️ সফল Referral যাচাই হওয়ার পর Referral Reward প্রযোজ্য হবে।
+ℹ️ নতুন সদস্য আপনার Referral Link দিয়ে Bot চালু করে প্রয়োজনীয় Verification সম্পন্ন করলে Referral সফল হিসেবে গণনা করা হবে।
 </div>
 
 </section>
-
 
 <!-- TASK -->
 <section id="task" class="page">
@@ -343,21 +342,16 @@ onclick="shareReferral()">
 <div class="card">
 📝
 <h3>Survey Tasks</h3>
-<p>
-CPX Research approval-এর পরে survey এখানে দেখা যাবে।
-</p>
+<p>Survey কাজ শিগগিরই যুক্ত হবে।</p>
 </div>
 
 <div class="card">
 ▶️
 <h3>Video Tasks</h3>
-<p>
-বৈধ rewarded video provider যুক্ত হলে এখানে video task আসবে।
-</p>
+<p>Video task শিগগিরই যুক্ত হবে।</p>
 </div>
 
 </section>
-
 
 <!-- WALLET -->
 <section id="wallet" class="page">
@@ -377,6 +371,7 @@ CPX Research approval-এর পরে survey এখানে দেখা য�
 </div>
 
 <button
+type="button"
 class="btn primary"
 onclick="showWithdraw()">
 💸 Withdraw
@@ -384,11 +379,7 @@ onclick="showWithdraw()">
 
 </div>
 
-
-<div
-id="withdrawBox"
-class="card"
-style="display:none">
+<div id="withdrawBox" class="card" style="display:none">
 
 <h2>💸 টাকা উত্তোলন</h2>
 
@@ -396,14 +387,14 @@ style="display:none">
 ⚠️ আপনার ব্যালেন্স সর্বনিম্ন <b>৳500</b> হলে Withdraw করতে পারবেন।
 </div>
 
-<label>Payment Method</label>
+<label for="paymentMethod">Payment Method</label>
 
 <select id="paymentMethod">
 <option value="bKash">bKash</option>
 <option value="Nagad">Nagad</option>
 </select>
 
-<label>আপনার মোবাইল নম্বর</label>
+<label for="paymentNumber">আপনার মোবাইল নম্বর</label>
 
 <input
 id="paymentNumber"
@@ -412,7 +403,7 @@ inputmode="numeric"
 placeholder="01XXXXXXXXX"
 maxlength="11">
 
-<label>কত টাকা Withdraw করবেন?</label>
+<label for="withdrawAmount">কত টাকা Withdraw করবেন?</label>
 
 <input
 id="withdrawAmount"
@@ -423,6 +414,7 @@ min="500"
 step="1">
 
 <button
+type="button"
 class="btn primary"
 style="width:100%;margin-top:15px"
 onclick="submitWithdraw()">
@@ -434,7 +426,6 @@ onclick="submitWithdraw()">
 </div>
 </section>
 
-
 <!-- PROFILE -->
 <section id="profile" class="page">
 
@@ -442,19 +433,12 @@ onclick="submitWithdraw()">
 
 <div class="card">
 
-<div
-id="tgName"
-class="profile-name">
+<div id="tgName" class="profile-name">
 SM Earn Member
 </div>
 
-<p id="tgId">
-Telegram ID
-</p>
-
-<p id="tgUsername">
-@username
-</p>
+<p id="tgId">Telegram ID</p>
+<p id="tgUsername">@username</p>
 
 </div>
 
@@ -476,51 +460,37 @@ onclick="openTelegram('https://t.me/kamrulislam2026')">
 
 </main>
 
-
-<!-- BOTTOM NAVIGATION -->
+<!-- NAVIGATION -->
 <nav>
 
-<button
-data-page="home"
-class="active"
-onclick="go('home')">
+<button type="button" data-page="home" class="active" onclick="go('home')">
 🏠
 <small>Home</small>
 </button>
 
-<button
-data-page="refer"
-onclick="go('refer')">
+<button type="button" data-page="refer" onclick="go('refer')">
 👥
 <small>Refer</small>
 </button>
 
-<button
-data-page="task"
-onclick="go('task')">
+<button type="button" data-page="task" onclick="go('task')">
 ✅
 <small>Task</small>
 </button>
 
-<button
-data-page="wallet"
-onclick="go('wallet')">
+<button type="button" data-page="wallet" onclick="go('wallet')">
 💰
 <small>Wallet</small>
 </button>
 
-<button
-data-page="profile"
-onclick="go('profile')">
+<button type="button" data-page="profile" onclick="go('profile')">
 👤
 <small>Profile</small>
 </button>
 
 </nav>
 
-
 <script>
-
 const tg = window.Telegram?.WebApp;
 
 if(tg){
@@ -528,9 +498,19 @@ tg.ready();
 tg.expand();
 }
 
-const user =
-tg?.initDataUnsafe?.user || null;
+const user = tg?.initDataUnsafe?.user || null;
 
+/* REFERRAL LINK */
+
+function referralURL(){
+
+if(!user || !user.id){
+return "";
+}
+
+return "https://t.me/SMEarnBD_Bot?start=ref_" + user.id;
+
+}
 
 /* TELEGRAM PROFILE */
 
@@ -543,98 +523,54 @@ user.last_name
 .filter(Boolean)
 .join(" ");
 
-document
-.getElementById("tgName")
-.textContent =
+document.getElementById("tgName").textContent =
 fullName || "SM Earn Member";
 
-document
-.getElementById("tgId")
-.textContent =
+document.getElementById("tgId").textContent =
 "Telegram ID: " + user.id;
 
-document
-.getElementById("tgUsername")
-.textContent =
+document.getElementById("tgUsername").textContent =
 user.username
 ? "@" + user.username
 : "Username নেই";
 
-document
-.getElementById("refCode")
-.textContent =
+document.getElementById("refCode").textContent =
 referralURL();
 
 }else{
 
-document
-.getElementById("refCode")
-.textContent =
-"Telegram Bot থেকে খুলুন";
+document.getElementById("refCode").textContent =
+"Telegram Bot থেকে SM Earn খুলুন";
 
 }
-
 
 /* NAVIGATION */
 
 function go(id){
 
-document
-.querySelectorAll(".page")
-.forEach(page=>{
-
-page.classList.toggle(
-"active",
-page.id===id
-);
-
+document.querySelectorAll(".page").forEach(page=>{
+page.classList.toggle("active",page.id===id);
 });
 
-document
-.querySelectorAll("nav button")
-.forEach(btn=>{
-
-btn.classList.toggle(
-"active",
-btn.dataset.page===id
-);
-
+document.querySelectorAll("nav button").forEach(btn=>{
+btn.classList.toggle("active",btn.dataset.page===id);
 });
 
 window.scrollTo(0,0);
 
 }
 
-
-/* TELEGRAM LINKS */
+/* TELEGRAM LINK */
 
 function openTelegram(url){
 
 if(tg?.openTelegramLink){
-
 tg.openTelegramLink(url);
-
 }else{
-
 window.open(url,"_blank");
-
 }
 
 }
-
-
-/* REFERRAL LINK */
-
-function referralURL(){
-
-if(!user){
-return "";
-}
-
-return "https://t.me/SMEarnBD_Bot?start=ref_"+user.id;
-
-}
-
 
 /* COPY REFERRAL */
 
@@ -644,30 +580,83 @@ const url = referralURL();
 
 if(!url){
 
-tg?.showAlert?.(
-"Telegram Bot থেকে SM Earn খুলুন।"
-);
+if(tg?.showAlert){
+tg.showAlert("Telegram Bot থেকে SM Earn খুলুন।");
+}else{
+alert("Telegram Bot থেকে SM Earn খুলুন।");
+}
 
 return;
-
 }
 
 try{
 
+if(
+navigator.clipboard &&
+window.isSecureContext
+){
+
 await navigator.clipboard.writeText(url);
 
-tg?.showAlert?.(
-"Referral Link কপি হয়েছে ✅"
-);
+if(tg?.showAlert){
+tg.showAlert("Referral Link কপি হয়েছে ✅");
+}else{
+alert("Referral Link কপি হয়েছে ✅");
+}
+
+return;
+}
+
+throw new Error("Clipboard unavailable");
 
 }catch(error){
 
-tg?.showAlert?.(url);
+const textarea =
+document.createElement("textarea");
 
+textarea.value = url;
+textarea.setAttribute("readonly","");
+textarea.style.position = "fixed";
+textarea.style.left = "-9999px";
+textarea.style.top = "0";
+
+document.body.appendChild(textarea);
+
+textarea.focus();
+textarea.select();
+textarea.setSelectionRange(0,textarea.value.length);
+
+let copied = false;
+
+try{
+copied = document.execCommand("copy");
+}catch(copyError){
+copied = false;
+}
+
+document.body.removeChild(textarea);
+
+if(copied){
+
+if(tg?.showAlert){
+tg.showAlert("Referral Link কপি হয়েছে ✅");
+}else{
+alert("Referral Link কপি হয়েছে ✅");
+}
+
+}else{
+
+if(tg?.showAlert){
+tg.showAlert("কপি করা যায়নি। বন্ধুদের কাছে শেয়ার করুন বাটন ব্যবহার করুন।");
+}else{
+alert("কপি করা যায়নি। Share বাটন ব্যবহার করুন।");
 }
 
 }
 
+}
+
+}
 
 /* SHARE REFERRAL */
 
@@ -677,46 +666,38 @@ const url = referralURL();
 
 if(!url){
 
-tg?.showAlert?.(
-"Telegram Bot থেকে SM Earn খুলুন।"
-);
+if(tg?.showAlert){
+tg.showAlert("Telegram Bot থেকে SM Earn খুলুন।");
+}else{
+alert("Telegram Bot থেকে SM Earn খুলুন।");
+}
 
 return;
-
 }
 
 const text =
-"💰 SM Earn-এ Join করুন!\n\n"
-+
-"🎁 আমার Referral Link দিয়ে Join করুন।\n"
-+
+"💰 SM Earn-এ Join করুন!\n\n" +
+"🎁 আমার Referral Link দিয়ে Bot চালু করুন।\n" +
 "📲 নিচের লিংকে চাপ দিয়ে শুরু করুন:";
 
-const share =
-"https://t.me/share/url?url="
-+
-encodeURIComponent(url)
-+
-"&text="
-+
+const shareURL =
+"https://t.me/share/url?url=" +
+encodeURIComponent(url) +
+"&text=" +
 encodeURIComponent(text);
 
-openTelegram(share);
+openTelegram(shareURL);
 
 }
-
 
 /* WITHDRAW BOX */
 
 function showWithdraw(){
 
 const box =
-document.getElementById(
-"withdrawBox"
-);
+document.getElementById("withdrawBox");
 
-box.style.display =
-"block";
+box.style.display = "block";
 
 box.scrollIntoView({
 behavior:"smooth"
@@ -724,84 +705,53 @@ behavior:"smooth"
 
 }
 
-
 /* WITHDRAW VALIDATION */
 
 function submitWithdraw(){
 
 const method =
-document.getElementById(
-"paymentMethod"
-).value;
+document.getElementById("paymentMethod").value;
 
 const number =
-document.getElementById(
-"paymentNumber"
-).value.trim();
+document.getElementById("paymentNumber").value.trim();
 
 const amount =
 Number(
-document.getElementById(
-"withdrawAmount"
-).value
+document.getElementById("withdrawAmount").value
 );
 
 const msg =
-document.getElementById(
-"withdrawMessage"
-);
+document.getElementById("withdrawMessage");
 
 msg.className = "";
 
-
-/* MOBILE NUMBER */
-
 if(!/^01\d{9}$/.test(number)){
 
-msg.className =
-"error";
-
+msg.className = "error";
 msg.textContent =
 "❌ সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।";
 
 return;
-
 }
 
-
-/* MINIMUM ৳500 */
-
 if(
-!Number.isFinite(amount)
-||
+!Number.isFinite(amount) ||
 amount < 500
 ){
 
-msg.className =
-"error";
-
+msg.className = "error";
 msg.textContent =
 "❌ সর্বনিম্ন ৳500 Withdraw করতে হবে।";
 
 return;
-
 }
 
-
-/* DEMO ONLY */
-
-msg.className =
-"success";
-
+msg.className = "success";
 msg.textContent =
-"✅ "
-+
-method
-+
-" Withdraw তথ্য ঠিক আছে। Real withdrawal system যুক্ত হলে request জমা হবে.";
+"✅ " + method +
+" Withdraw তথ্য ঠিক আছে। Real withdrawal system যুক্ত হলে request জমা হবে।";
 
 }
-
 </script>
 
 </body>
