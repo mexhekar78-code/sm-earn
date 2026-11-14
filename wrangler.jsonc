@@ -1,0 +1,14 @@
+{
+  "name": "sm-earn-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-13",
+  "workers_dev": true,
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sm-earn-db",
+      "database_id": "4b91b0dc-31f2-4e5f-9367-6429fdf674f5"
+    }
+  ]
+}
