@@ -1,5 +1,5 @@
 const APP_NAME = "SM Earn API";
-const VERSION = "4.0";
+const VERSION = "4.1";
 
 const GROUP_ID = "@tiktokaccountbaysell";
 const CHANNEL_ID = "@SMEarn2026";
@@ -10,7 +10,7 @@ const MIN_WITHDRAW = 500;
 const WEB_ORIGIN =
   "https://mexhekar78-code.github.io";
 
-const CORS_HEADERS = {
+const CORS = {
   "Access-Control-Allow-Origin": WEB_ORIGIN,
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
   "Access-Control-Allow-Headers":
@@ -22,18 +22,19 @@ function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      "Content-Type": "application/json; charset=UTF-8",
+      "Content-Type":
+        "application/json; charset=UTF-8",
       "Cache-Control": "no-store",
-      ...CORS_HEADERS
+      ...CORS
     }
   });
 }
 
-function html(content, status = 200) {
+function html(content) {
   return new Response(content, {
-    status,
     headers: {
-      "Content-Type": "text/html; charset=UTF-8",
+      "Content-Type":
+        "text/html; charset=UTF-8",
       "Cache-Control": "no-store",
       "Referrer-Policy": "no-referrer"
     }
@@ -48,7 +49,13 @@ async function readJson(request) {
   }
 }
 
-function validTelegramId(value) {
+function safeText(value, max = 100) {
+  return String(value || "")
+    .trim()
+    .slice(0, max);
+}
+
+function validId(value) {
   const id = Number(value);
 
   return (
@@ -63,12 +70,6 @@ function validPhone(value) {
   );
 }
 
-function safeText(value, maxLength = 100) {
-  return String(value || "")
-    .trim()
-    .slice(0, maxLength);
-}
-
 function money(value) {
   const number = Number(value || 0);
 
@@ -81,7 +82,7 @@ function money(value) {
   );
 }
 
-function constantTimeEqual(a, b) {
+function safeEqual(a, b) {
   if (
     typeof a !== "string" ||
     typeof b !== "string" ||
@@ -102,9 +103,12 @@ function constantTimeEqual(a, b) {
 }
 
 function bytesToHex(bytes) {
-  return Array.from(bytes)
+  return Array
+    .from(bytes)
     .map(byte =>
-      byte.toString(16).padStart(2, "0")
+      byte
+        .toString(16)
+        .padStart(2, "0")
     )
     .join("");
 }
@@ -114,11 +118,13 @@ async function hmacSha256(
   message,
   keyIsBytes = false
 ) {
-  const encoder = new TextEncoder();
+  const encoder =
+    new TextEncoder();
 
-  const rawKey = keyIsBytes
-    ? key
-    : encoder.encode(key);
+  const rawKey =
+    keyIsBytes
+      ? key
+      : encoder.encode(key);
 
   const cryptoKey =
     await crypto.subtle.importKey(
@@ -142,21 +148,44 @@ async function hmacSha256(
   return new Uint8Array(signature);
 }
 
-async function validateTelegramInitData(
+/*
+  TELEGRAM MINI APP AUTHENTICATION
+
+  সংশোধন:
+  data-check string তৈরি করার সময়
+  শুধু hash বাদ যাবে।
+
+  signature থাকলে data-check string-এর
+  মধ্যে থাকবে।
+*/
+
+async function telegramUser(
   request,
   env
 ) {
-  const authorization =
-    request.headers.get("Authorization") || "";
+  if (!env.BOT_TOKEN) {
+    throw new Error(
+      "BOT_TOKEN পাওয়া যায়নি।"
+    );
+  }
 
-  if (!authorization.startsWith("tma ")) {
+  const authorization =
+    request.headers.get(
+      "Authorization"
+    ) || "";
+
+  if (
+    !authorization.startsWith("tma ")
+  ) {
     throw new Error(
       "Telegram authentication পাওয়া যায়নি।"
     );
   }
 
   const rawInitData =
-    authorization.slice(4).trim();
+    authorization
+      .slice(4)
+      .trim();
 
   if (!rawInitData) {
     throw new Error(
@@ -165,13 +194,19 @@ async function validateTelegramInitData(
   }
 
   const params =
-    new URLSearchParams(rawInitData);
+    new URLSearchParams(
+      rawInitData
+    );
 
   const receivedHash =
-    params.get("hash") || "";
+    String(
+      params.get("hash") || ""
+    ).toLowerCase();
 
   const authDate =
-    Number(params.get("auth_date"));
+    Number(
+      params.get("auth_date")
+    );
 
   const userText =
     params.get("user");
@@ -187,25 +222,29 @@ async function validateTelegramInitData(
   }
 
   const now =
-    Math.floor(Date.now() / 1000);
+    Math.floor(
+      Date.now() / 1000
+    );
 
   if (
     authDate > now + 60 ||
     now - authDate > 86400
   ) {
     throw new Error(
-      "Telegram session-এর মেয়াদ শেষ। Bot থেকে Web App আবার খুলুন।"
+      "Telegram session শেষ। Bot থেকে Web App আবার খুলুন।"
     );
   }
 
   const lines = [];
 
-  for (const [key, value] of params.entries()) {
-    if (
-      key !== "hash" &&
-      key !== "signature"
-    ) {
-      lines.push(`${key}=${value}`);
+  for (
+    const [key, value]
+    of params.entries()
+  ) {
+    if (key !== "hash") {
+      lines.push(
+        `${key}=${value}`
+      );
     }
   }
 
@@ -230,9 +269,9 @@ async function validateTelegramInitData(
     );
 
   if (
-    !constantTimeEqual(
+    !safeEqual(
       calculatedHash,
-      receivedHash.toLowerCase()
+      receivedHash
     )
   ) {
     throw new Error(
@@ -243,14 +282,15 @@ async function validateTelegramInitData(
   let user;
 
   try {
-    user = JSON.parse(userText);
+    user =
+      JSON.parse(userText);
   } catch {
     throw new Error(
       "Telegram user data সঠিক নয়।"
     );
   }
 
-  if (!validTelegramId(user?.id)) {
+  if (!validId(user?.id)) {
     throw new Error(
       "Telegram user ID সঠিক নয়।"
     );
@@ -258,16 +298,31 @@ async function validateTelegramInitData(
 
   return {
     id: Number(user.id),
+
     firstName:
-      safeText(user.first_name, 100),
+      safeText(
+        user.first_name,
+        100
+      ),
+
     lastName:
-      safeText(user.last_name, 100),
+      safeText(
+        user.last_name,
+        100
+      ),
+
     username:
-      safeText(user.username, 100)
+      safeText(
+        user.username,
+        100
+      )
   };
 }
 
-function botAuthorised(request, env) {
+function botAllowed(
+  request,
+  env
+) {
   const supplied =
     request.headers.get(
       "X-Bot-Secret"
@@ -275,14 +330,17 @@ function botAuthorised(request, env) {
 
   return (
     Boolean(env.BOT_API_SECRET) &&
-    constantTimeEqual(
+    safeEqual(
       supplied,
       env.BOT_API_SECRET
     )
   );
 }
 
-function adminAuthorised(request, env) {
+function adminAllowed(
+  request,
+  env
+) {
   const supplied =
     request.headers.get(
       "X-Admin-Secret"
@@ -290,7 +348,7 @@ function adminAuthorised(request, env) {
 
   return (
     Boolean(env.ADMIN_SECRET) &&
-    constantTimeEqual(
+    safeEqual(
       supplied,
       env.ADMIN_SECRET
     )
@@ -302,22 +360,24 @@ async function telegramApi(
   method,
   body
 ) {
-  if (!env.BOT_TOKEN) {
-    throw new Error(
-      "BOT_TOKEN Secret পাওয়া যায়নি।"
-    );
-  }
+  const response =
+    await fetch(
+      "https://api.telegram.org/bot" +
+      env.BOT_TOKEN +
+      "/" +
+      method,
+      {
+        method: "POST",
 
-  const response = await fetch(
-    `https://api.telegram.org/bot${env.BOT_TOKEN}/${method}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    }
-  );
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(body)
+      }
+    );
 
   const result =
     await response.json();
@@ -335,7 +395,7 @@ async function telegramApi(
   return result.result;
 }
 
-async function isMember(
+async function joined(
   env,
   chatId,
   userId
@@ -359,16 +419,21 @@ async function isMember(
     }
 
     if (
-      member.status === "restricted"
+      member.status ===
+      "restricted"
     ) {
-      return member.is_member === true;
+      return (
+        member.is_member === true
+      );
     }
 
     return [
       "member",
       "administrator",
       "creator"
-    ].includes(member.status);
+    ].includes(
+      member.status
+    );
 
   } catch (error) {
     console.log(
@@ -380,6 +445,37 @@ async function isMember(
 
     return false;
   }
+}
+
+async function membership(
+  env,
+  userId
+) {
+  const [
+    groupJoined,
+    channelJoined
+  ] = await Promise.all([
+    joined(
+      env,
+      GROUP_ID,
+      userId
+    ),
+
+    joined(
+      env,
+      CHANNEL_ID,
+      userId
+    )
+  ]);
+
+  return {
+    access:
+      groupJoined &&
+      channelJoined,
+
+    groupJoined,
+    channelJoined
+  };
 }
 
 async function ensureSchema(env) {
@@ -418,14 +514,32 @@ async function ensureSchema(env) {
       CREATE TABLE IF NOT EXISTS withdrawals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
+
         method TEXT NOT NULL
-          CHECK(method IN ('bKash','Nagad')),
+          CHECK(
+            method IN (
+              'bKash',
+              'Nagad'
+            )
+          ),
+
         account_number TEXT NOT NULL,
+
         amount REAL NOT NULL
           CHECK(amount >= 500),
-        status TEXT NOT NULL DEFAULT 'pending'
-          CHECK(status IN ('pending','paid','rejected')),
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+        status TEXT NOT NULL
+          DEFAULT 'pending'
+          CHECK(
+            status IN (
+              'pending',
+              'paid',
+              'rejected'
+            )
+          ),
+
+        created_at TEXT NOT NULL
+          DEFAULT CURRENT_TIMESTAMP
       )
     `),
 
@@ -436,7 +550,8 @@ async function ensureSchema(env) {
     `),
 
     env.DB.prepare(`
-      CREATE UNIQUE INDEX IF NOT EXISTS
+      CREATE UNIQUE INDEX
+      IF NOT EXISTS
       idx_referrals_referred_unique
       ON referrals(referred_id)
     `),
@@ -444,12 +559,15 @@ async function ensureSchema(env) {
     env.DB.prepare(`
       CREATE INDEX IF NOT EXISTS
       idx_withdrawals_user_status
-      ON withdrawals(user_id,status)
+      ON withdrawals(
+        user_id,
+        status
+      )
     `)
   ]);
 }
 
-async function upsertUser(
+async function saveUser(
   env,
   user
 ) {
@@ -463,6 +581,7 @@ async function upsertUser(
       referral_count,
       created_at
     )
+
     VALUES (
       ?,
       ?,
@@ -473,10 +592,16 @@ async function upsertUser(
       CURRENT_TIMESTAMP
     )
 
-    ON CONFLICT(id) DO UPDATE SET
-      first_name = excluded.first_name,
-      last_name = excluded.last_name,
-      username = excluded.username
+    ON CONFLICT(id)
+    DO UPDATE SET
+      first_name =
+        excluded.first_name,
+
+      last_name =
+        excluded.last_name,
+
+      username =
+        excluded.username
   `)
     .bind(
       user.id,
@@ -487,44 +612,21 @@ async function upsertUser(
     .run();
 }
 
-async function checkMembership(
-  env,
-  userId
-) {
-  const [
-    groupJoined,
-    channelJoined
-  ] = await Promise.all([
-    isMember(
-      env,
-      GROUP_ID,
-      userId
-    ),
-    isMember(
-      env,
-      CHANNEL_ID,
-      userId
-    )
-  ]);
-
-  return {
-    access:
-      groupJoined &&
-      channelJoined,
-    groupJoined,
-    channelJoined
-  };
-}
-
-async function handleBotRegister(
+async function botRegister(
   request,
   env
 ) {
-  if (!botAuthorised(request, env)) {
+  if (
+    !botAllowed(
+      request,
+      env
+    )
+  ) {
     return json(
       {
         success: false,
-        error: "Bot access denied."
+        error:
+          "Bot access denied."
       },
       401
     );
@@ -536,7 +638,7 @@ async function handleBotRegister(
   const userId =
     Number(body.userId);
 
-  if (!validTelegramId(userId)) {
+  if (!validId(userId)) {
     return json(
       {
         success: false,
@@ -547,14 +649,26 @@ async function handleBotRegister(
     );
   }
 
-  await upsertUser(env, {
+  await saveUser(env, {
     id: userId,
+
     firstName:
-      safeText(body.firstName, 100),
+      safeText(
+        body.firstName,
+        100
+      ),
+
     lastName:
-      safeText(body.lastName, 100),
+      safeText(
+        body.lastName,
+        100
+      ),
+
     username:
-      safeText(body.username, 100)
+      safeText(
+        body.username,
+        100
+      )
   });
 
   return json({
@@ -563,16 +677,22 @@ async function handleBotRegister(
   });
 }
 
-async function handleReferralCredit(
+async function referralCredit(
   request,
   env
 ) {
-  if (!botAuthorised(request, env)) {
+  if (
+    !botAllowed(
+      request,
+      env
+    )
+  ) {
     return json(
       {
         success: false,
         credited: false,
-        error: "Bot access denied."
+        error:
+          "Bot access denied."
       },
       401
     );
@@ -588,8 +708,8 @@ async function handleReferralCredit(
     Number(body.referrerId);
 
   if (
-    !validTelegramId(referredId) ||
-    !validTelegramId(referrerId)
+    !validId(referredId) ||
+    !validId(referrerId)
   ) {
     return json(
       {
@@ -602,7 +722,9 @@ async function handleReferralCredit(
     );
   }
 
-  if (referredId === referrerId) {
+  if (
+    referredId === referrerId
+  ) {
     return json(
       {
         success: false,
@@ -614,18 +736,19 @@ async function handleReferralCredit(
     );
   }
 
-  const membership =
-    await checkMembership(
+  const memberStatus =
+    await membership(
       env,
       referredId
     );
 
-  if (!membership.access) {
+  if (!memberStatus.access) {
     return json(
       {
         success: false,
         credited: false,
-        ...membership,
+        ...memberStatus,
+
         error:
           "নতুন সদস্য Group ও Channel Verify করেনি।"
       },
@@ -633,14 +756,26 @@ async function handleReferralCredit(
     );
   }
 
-  await upsertUser(env, {
+  await saveUser(env, {
     id: referredId,
+
     firstName:
-      safeText(body.firstName, 100),
+      safeText(
+        body.firstName,
+        100
+      ),
+
     lastName:
-      safeText(body.lastName, 100),
+      safeText(
+        body.lastName,
+        100
+      ),
+
     username:
-      safeText(body.username, 100)
+      safeText(
+        body.username,
+        100
+      )
   });
 
   const referrer =
@@ -679,6 +814,7 @@ async function handleReferralCredit(
       success: true,
       credited: false,
       alreadyCredited: true,
+
       message:
         "এই সদস্যের Referral Reward আগেই দেওয়া হয়েছে।"
     });
@@ -693,6 +829,7 @@ async function handleReferralCredit(
           reward,
           created_at
         )
+
         VALUES (
           ?,
           ?,
@@ -708,11 +845,14 @@ async function handleReferralCredit(
 
       env.DB.prepare(`
         UPDATE users
+
         SET
           balance =
             balance + ?,
+
           referral_count =
             referral_count + 1
+
         WHERE id = ?
       `)
         .bind(
@@ -722,7 +862,9 @@ async function handleReferralCredit(
 
       env.DB.prepare(`
         UPDATE users
+
         SET referred_by = ?
+
         WHERE id = ?
         AND referred_by IS NULL
       `)
@@ -731,6 +873,7 @@ async function handleReferralCredit(
           referredId
         )
     ]);
+
   } catch (error) {
     const duplicate =
       await env.DB.prepare(`
@@ -746,6 +889,7 @@ async function handleReferralCredit(
         success: true,
         credited: false,
         alreadyCredited: true,
+
         message:
           "Referral Reward আগেই দেওয়া হয়েছে।"
       });
@@ -757,13 +901,15 @@ async function handleReferralCredit(
   return json({
     success: true,
     credited: true,
-    reward: REFERRAL_REWARD,
+    reward:
+      REFERRAL_REWARD,
+
     message:
       "Referral সফল হয়েছে। ৳5 Balance-এ যোগ হয়েছে।"
   });
 }
 
-async function handleMiniAppSession(
+async function session(
   request,
   env
 ) {
@@ -771,24 +917,29 @@ async function handleMiniAppSession(
 
   try {
     user =
-      await validateTelegramInitData(
+      await telegramUser(
         request,
         env
       );
+
   } catch (error) {
     return json(
       {
         success: false,
-        error: error.message
+        error:
+          error.message
       },
       401
     );
   }
 
-  await upsertUser(env, user);
+  await saveUser(
+    env,
+    user
+  );
 
-  const membership =
-    await checkMembership(
+  const memberStatus =
+    await membership(
       env,
       user.id
     );
@@ -803,7 +954,9 @@ async function handleMiniAppSession(
         balance,
         referral_count,
         referred_by
+
       FROM users
+
       WHERE id = ?
     `)
       .bind(user.id)
@@ -811,21 +964,31 @@ async function handleMiniAppSession(
 
   return json({
     success: true,
-    membership,
+
+    membership:
+      memberStatus,
+
     user: {
-      id: account.id,
+      id:
+        account.id,
+
       firstName:
         account.first_name || "",
+
       lastName:
         account.last_name || "",
+
       username:
         account.username || "",
+
       balance:
         money(account.balance),
+
       referralCount:
         Number(
           account.referral_count || 0
         ),
+
       referralEarnings:
         money(
           Number(
@@ -833,33 +996,38 @@ async function handleMiniAppSession(
           ) *
           REFERRAL_REWARD
         ),
+
       referredBy:
         account.referred_by || null
     },
+
     referralReward:
       REFERRAL_REWARD,
+
     minimumWithdraw:
       MIN_WITHDRAW
   });
 }
 
-async function handleWithdraw(
+async function withdraw(
   request,
   env
 ) {
-  let telegramUser;
+  let user;
 
   try {
-    telegramUser =
-      await validateTelegramInitData(
+    user =
+      await telegramUser(
         request,
         env
       );
+
   } catch (error) {
     return json(
       {
         success: false,
-        error: error.message
+        error:
+          error.message
       },
       401
     );
@@ -869,7 +1037,10 @@ async function handleWithdraw(
     await readJson(request);
 
   const method =
-    safeText(body.method, 20);
+    safeText(
+      body.method,
+      20
+    );
 
   const accountNumber =
     safeText(
@@ -894,7 +1065,11 @@ async function handleWithdraw(
     );
   }
 
-  if (!validPhone(accountNumber)) {
+  if (
+    !validPhone(
+      accountNumber
+    )
+  ) {
     return json(
       {
         success: false,
@@ -919,18 +1094,18 @@ async function handleWithdraw(
     );
   }
 
-  await upsertUser(
+  await saveUser(
     env,
-    telegramUser
+    user
   );
 
-  const membership =
-    await checkMembership(
+  const memberStatus =
+    await membership(
       env,
-      telegramUser.id
+      user.id
     );
 
-  if (!membership.access) {
+  if (!memberStatus.access) {
     return json(
       {
         success: false,
@@ -941,18 +1116,19 @@ async function handleWithdraw(
     );
   }
 
-  const user =
+  const account =
     await env.DB.prepare(`
       SELECT balance
       FROM users
       WHERE id = ?
     `)
-      .bind(telegramUser.id)
+      .bind(user.id)
       .first();
 
   if (
-    !user ||
-    money(user.balance) < amount
+    !account ||
+    money(account.balance) <
+      amount
   ) {
     return json(
       {
@@ -968,11 +1144,13 @@ async function handleWithdraw(
     await env.DB.prepare(`
       SELECT id
       FROM withdrawals
+
       WHERE user_id = ?
       AND status = 'pending'
+
       LIMIT 1
     `)
-      .bind(telegramUser.id)
+      .bind(user.id)
       .first();
 
   if (pending) {
@@ -996,6 +1174,7 @@ async function handleWithdraw(
         status,
         created_at
       )
+
       VALUES (
         ?,
         ?,
@@ -1006,7 +1185,7 @@ async function handleWithdraw(
       )
     `)
       .bind(
-        telegramUser.id,
+        user.id,
         method,
         accountNumber,
         amount
@@ -1015,19 +1194,28 @@ async function handleWithdraw(
 
   return json({
     success: true,
+
     withdrawalId:
       result.meta.last_row_id,
-    status: "pending",
+
+    status:
+      "pending",
+
     message:
       "Withdraw Request সফলভাবে জমা হয়েছে।"
   });
 }
 
-async function handleAdminList(
+async function adminList(
   request,
   env
 ) {
-  if (!adminAuthorised(request, env)) {
+  if (
+    !adminAllowed(
+      request,
+      env
+    )
+  ) {
     return json(
       {
         success: false,
@@ -1043,8 +1231,9 @@ async function handleAdminList(
 
   const status =
     safeText(
-      url.searchParams.get("status")
-      || "pending",
+      url.searchParams.get(
+        "status"
+      ) || "pending",
       20
     );
 
@@ -1055,7 +1244,9 @@ async function handleAdminList(
     "all"
   ];
 
-  if (!allowed.includes(status)) {
+  if (
+    !allowed.includes(status)
+  ) {
     return json(
       {
         success: false,
@@ -1083,12 +1274,17 @@ async function handleAdminList(
           u.last_name,
           u.username,
           u.balance
+
         FROM withdrawals w
+
         LEFT JOIN users u
           ON u.id = w.user_id
+
         ORDER BY w.id DESC
+
         LIMIT 200
       `);
+
   } else {
     statement =
       env.DB.prepare(`
@@ -1104,11 +1300,16 @@ async function handleAdminList(
           u.last_name,
           u.username,
           u.balance
+
         FROM withdrawals w
+
         LEFT JOIN users u
           ON u.id = w.user_id
+
         WHERE w.status = ?
+
         ORDER BY w.id DESC
+
         LIMIT 200
       `)
         .bind(status);
@@ -1119,16 +1320,22 @@ async function handleAdminList(
 
   return json({
     success: true,
+
     withdrawals:
       result.results || []
   });
 }
 
-async function handleAdminPaid(
+async function adminPaid(
   request,
   env
 ) {
-  if (!adminAuthorised(request, env)) {
+  if (
+    !adminAllowed(
+      request,
+      env
+    )
+  ) {
     return json(
       {
         success: false,
@@ -1142,14 +1349,14 @@ async function handleAdminPaid(
   const body =
     await readJson(request);
 
-  const withdrawalId =
-    Number(body.withdrawalId);
+  const id =
+    Number(
+      body.withdrawalId
+    );
 
   if (
-    !Number.isSafeInteger(
-      withdrawalId
-    ) ||
-    withdrawalId < 1
+    !Number.isSafeInteger(id) ||
+    id < 1
   ) {
     return json(
       {
@@ -1168,10 +1375,12 @@ async function handleAdminPaid(
         user_id,
         amount,
         status
+
       FROM withdrawals
+
       WHERE id = ?
     `)
-      .bind(withdrawalId)
+      .bind(id)
       .first();
 
   if (!item) {
@@ -1185,7 +1394,9 @@ async function handleAdminPaid(
     );
   }
 
-  if (item.status !== "pending") {
+  if (
+    item.status !== "pending"
+  ) {
     return json(
       {
         success: false,
@@ -1196,7 +1407,7 @@ async function handleAdminPaid(
     );
   }
 
-  const user =
+  const account =
     await env.DB.prepare(`
       SELECT balance
       FROM users
@@ -1206,8 +1417,8 @@ async function handleAdminPaid(
       .first();
 
   if (
-    !user ||
-    money(user.balance) <
+    !account ||
+    money(account.balance) <
       money(item.amount)
   ) {
     return json(
@@ -1223,12 +1434,17 @@ async function handleAdminPaid(
   await env.DB.batch([
     env.DB.prepare(`
       UPDATE users
-      SET balance = balance - ?
+
+      SET balance =
+        balance - ?
+
       WHERE id = ?
       AND balance >= ?
+
       AND EXISTS (
         SELECT 1
         FROM withdrawals
+
         WHERE id = ?
         AND status = 'pending'
       )
@@ -1237,16 +1453,18 @@ async function handleAdminPaid(
         item.amount,
         item.user_id,
         item.amount,
-        withdrawalId
+        id
       ),
 
     env.DB.prepare(`
       UPDATE withdrawals
+
       SET status = 'paid'
+
       WHERE id = ?
       AND status = 'pending'
     `)
-      .bind(withdrawalId)
+      .bind(id)
   ]);
 
   return json({
@@ -1254,16 +1472,22 @@ async function handleAdminPaid(
     status: "paid",
     deducted:
       money(item.amount),
+
     message:
       "Withdraw Request PAID করা হয়েছে।"
   });
 }
 
-async function handleAdminReject(
+async function adminReject(
   request,
   env
 ) {
-  if (!adminAuthorised(request, env)) {
+  if (
+    !adminAllowed(
+      request,
+      env
+    )
+  ) {
     return json(
       {
         success: false,
@@ -1277,14 +1501,14 @@ async function handleAdminReject(
   const body =
     await readJson(request);
 
-  const withdrawalId =
-    Number(body.withdrawalId);
+  const id =
+    Number(
+      body.withdrawalId
+    );
 
   if (
-    !Number.isSafeInteger(
-      withdrawalId
-    ) ||
-    withdrawalId < 1
+    !Number.isSafeInteger(id) ||
+    id < 1
   ) {
     return json(
       {
@@ -1299,11 +1523,13 @@ async function handleAdminReject(
   const result =
     await env.DB.prepare(`
       UPDATE withdrawals
+
       SET status = 'rejected'
+
       WHERE id = ?
       AND status = 'pending'
     `)
-      .bind(withdrawalId)
+      .bind(id)
       .run();
 
   if (!result.meta.changes) {
@@ -1320,6 +1546,7 @@ async function handleAdminReject(
   return json({
     success: true,
     status: "rejected",
+
     message:
       "Withdraw Request Reject করা হয়েছে।"
   });
@@ -1330,111 +1557,288 @@ function adminPage() {
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
+
+<meta
+name="viewport"
 content="width=device-width,initial-scale=1">
+
 <title>SM Earn Admin</title>
+
 <style>
-*{box-sizing:border-box}
+*{
+box-sizing:border-box
+}
+
 body{
-margin:0;background:#f3f8f5;color:#173c2b;
+margin:0;
+background:#f3f8f5;
+color:#173c2b;
 font-family:system-ui,sans-serif
 }
+
 main{
-max-width:900px;margin:auto;padding:18px
+max-width:900px;
+margin:auto;
+padding:18px
 }
+
 .card{
-background:white;border-radius:16px;padding:16px;
-margin-bottom:14px;box-shadow:0 4px 14px #00000012
+background:white;
+border-radius:16px;
+padding:16px;
+margin-bottom:14px;
+box-shadow:0 4px 14px #00000012
 }
-h1{color:#087a43}
-input,select,button{
-font:inherit;padding:11px;border-radius:10px
+
+h1{
+color:#087a43
 }
-input,select{
-width:100%;border:1px solid #ccd9d1;
+
+input,
+select,
+button{
+font:inherit;
+padding:11px;
+border-radius:10px
+}
+
+input,
+select{
+width:100%;
+border:1px solid #ccd9d1;
 margin:6px 0 12px
 }
+
 button{
-border:0;font-weight:700;cursor:pointer
+border:0;
+font-weight:700;
+cursor:pointer
 }
-.green{background:#078b49;color:white}
-.red{background:#c33030;color:white}
+
+.green{
+background:#078b49;
+color:white
+}
+
+.red{
+background:#c33030;
+color:white
+}
+
 .item{
-border:1px solid #dce7e0;border-radius:13px;
-padding:14px;margin-top:10px
+border:1px solid #dce7e0;
+border-radius:13px;
+padding:14px;
+margin-top:10px
 }
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.error{color:#c33030;font-weight:700}
-.success{color:#078b49;font-weight:700}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap
+}
+
+.error{
+color:#c33030;
+font-weight:700
+}
+
+.success{
+color:#078b49;
+font-weight:700
+}
 </style>
 </head>
+
 <body>
+
 <main>
+
 <h1>💰 SM Earn Admin</h1>
 
 <div class="card">
-<label>Admin Secret</label>
-<input id="secret" type="password"
+
+<label>
+Admin Secret
+</label>
+
+<input
+id="secret"
+type="password"
 placeholder="ADMIN_SECRET লিখুন">
 
-<label>Status</label>
+<label>
+Status
+</label>
+
 <select id="status">
-<option value="pending">Pending</option>
-<option value="paid">Paid</option>
-<option value="rejected">Rejected</option>
-<option value="all">All</option>
+<option value="pending">
+Pending
+</option>
+
+<option value="paid">
+Paid
+</option>
+
+<option value="rejected">
+Rejected
+</option>
+
+<option value="all">
+All
+</option>
 </select>
 
-<button class="green"
+<button
+class="green"
 onclick="loadItems()">
 Request দেখুন
 </button>
 
 <p id="message"></p>
+
 </div>
 
 <div class="card">
-<h2>Withdraw Requests</h2>
+
+<h2>
+Withdraw Requests
+</h2>
+
 <div id="items">
 Secret লিখে Request দেখুন।
 </div>
+
 </div>
+
 </main>
 
 <script>
 const secretInput =
-document.getElementById("secret");
+document.getElementById(
+"secret"
+);
+
 const statusInput =
-document.getElementById("status");
+document.getElementById(
+"status"
+);
+
 const message =
-document.getElementById("message");
+document.getElementById(
+"message"
+);
+
 const items =
-document.getElementById("items");
+document.getElementById(
+"items"
+);
 
 function esc(value){
-return String(value ?? "")
+return String(
+value == null ? "" : value
+)
 .replaceAll("&","&amp;")
 .replaceAll("<","&lt;")
 .replaceAll(">","&gt;")
 .replaceAll('"',"&quot;");
 }
 
-async function loadItems(){
-message.className="";
-message.textContent="Loading...";
+function itemHtml(item){
 
-const secret=secretInput.value.trim();
-const status=statusInput.value;
+let actions = "";
+
+if(item.status === "pending"){
+
+actions =
+'<div class="actions">' +
+
+'<button class="green" onclick="processItem(' +
+Number(item.id) +
+',\\'paid\\')">' +
+'✅ PAID</button>' +
+
+'<button class="red" onclick="processItem(' +
+Number(item.id) +
+',\\'reject\\')">' +
+'❌ REJECT</button>' +
+
+'</div>';
+
+}
+
+return (
+'<div class="item">' +
+
+'<b>Request #' +
+esc(item.id) +
+'</b>' +
+
+'<p>Member: ' +
+esc(item.first_name) +
+' ' +
+esc(item.last_name) +
+'</p>' +
+
+'<p>Telegram ID: ' +
+esc(item.user_id) +
+'</p>' +
+
+'<p>Username: @' +
+esc(item.username || " নেই") +
+'</p>' +
+
+'<p>Method: <b>' +
+esc(item.method) +
+'</b></p>' +
+
+'<p>Number: <b>' +
+esc(item.account_number) +
+'</b></p>' +
+
+'<p>Amount: <b>৳' +
+esc(item.amount) +
+'</b></p>' +
+
+'<p>Status: <b>' +
+esc(item.status) +
+'</b></p>' +
+
+actions +
+
+'</div>'
+);
+
+}
+
+async function loadItems(){
+
+message.className = "";
+message.textContent =
+"Loading...";
+
+const secret =
+secretInput.value.trim();
+
+const status =
+statusInput.value;
 
 if(!secret){
-message.className="error";
-message.textContent="Admin Secret লিখুন।";
+
+message.className =
+"error";
+
+message.textContent =
+"Admin Secret লিখুন।";
+
 return;
 }
 
 try{
-const response=await fetch(
-"/admin/withdrawals?status="+
+
+const response =
+await fetch(
+"/admin/withdrawals?status=" +
 encodeURIComponent(status),
 {
 headers:{
@@ -1443,83 +1847,71 @@ headers:{
 }
 );
 
-const data=await response.json();
+const data =
+await response.json();
 
 if(!response.ok){
+
 throw new Error(
-data.error || "Request failed"
+data.error ||
+"Request failed"
 );
+
 }
 
-message.className="success";
-message.textContent=
-"মোট "+data.withdrawals.length+
+message.className =
+"success";
+
+message.textContent =
+"মোট " +
+data.withdrawals.length +
 "টি Request পাওয়া গেছে।";
 
-if(!data.withdrawals.length){
-items.innerHTML="<p>কোনো Request নেই।</p>";
-return;
-}
+items.innerHTML =
+data.withdrawals.length
 
-items.innerHTML=
-data.withdrawals.map(item=>\`
-<div class="item">
-<b>Request #\${esc(item.id)}</b>
-<p>Member:
-\${esc(item.first_name)}
-\${esc(item.last_name)}</p>
-<p>Telegram ID:
-\${esc(item.user_id)}</p>
-<p>Username:
-@\${esc(item.username || " নেই")}</p>
-<p>Method:
-<b>\${esc(item.method)}</b></p>
-<p>Number:
-<b>\${esc(item.account_number)}</b></p>
-<p>Amount:
-<b>৳\${esc(item.amount)}</b></p>
-<p>Status:
-<b>\${esc(item.status)}</b></p>
+? data.withdrawals
+.map(itemHtml)
+.join("")
 
-\${item.status==="pending" ? \`
-<div class="actions">
-<button class="green"
-onclick="processItem(
-\${Number(item.id)},
-'paid'
-)">
-✅ PAID
-</button>
+: "<p>কোনো Request নেই।</p>";
 
-<button class="red"
-onclick="processItem(
-\${Number(item.id)},
-'reject'
-)">
-❌ REJECT
-</button>
-</div>
-\` : ""}
-</div>
-\`).join("");
 }catch(error){
-message.className="error";
-message.textContent=error.message;
-}
+
+message.className =
+"error";
+
+message.textContent =
+error.message;
+
 }
 
-async function processItem(id,action){
-const secret=secretInput.value.trim();
+}
+
+async function processItem(
+id,
+action
+){
+
+const secret =
+secretInput.value.trim();
 
 if(!secret){
-message.className="error";
-message.textContent="Admin Secret লিখুন।";
+
+message.className =
+"error";
+
+message.textContent =
+"Admin Secret লিখুন।";
+
 return;
 }
 
-const text=
-action==="paid"
+const text =
+action === "paid"
+
 ? "টাকা পাঠানোর পরে PAID করবেন?"
+
 : "Request Reject করবেন?";
 
 if(!confirm(text)){
@@ -1527,47 +1919,75 @@ return;
 }
 
 try{
-const response=await fetch(
-"/admin/withdrawals/"+action,
+
+const response =
+await fetch(
+"/admin/withdrawals/" +
+action,
 {
 method:"POST",
+
 headers:{
-"Content-Type":"application/json",
-"X-Admin-Secret":secret
+"Content-Type":
+"application/json",
+
+"X-Admin-Secret":
+secret
 },
+
 body:JSON.stringify({
 withdrawalId:id
 })
 }
 );
 
-const data=await response.json();
+const data =
+await response.json();
 
 if(!response.ok){
+
 throw new Error(
-data.error || "Action failed"
+data.error ||
+"Action failed"
 );
+
 }
 
-alert(data.message || "সফল হয়েছে");
+alert(
+data.message ||
+"সফল হয়েছে"
+);
+
 await loadItems();
+
 }catch(error){
+
 alert(error.message);
+
 }
+
 }
 </script>
+
 </body>
 </html>`;
 }
 
 export default {
+
   async fetch(request, env) {
-    if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers:
-          CORS_HEADERS
-      });
+
+    if (
+      request.method ===
+      "OPTIONS"
+    ) {
+      return new Response(
+        null,
+        {
+          status: 204,
+          headers: CORS
+        }
+      );
     }
 
     try {
@@ -1579,23 +1999,43 @@ export default {
       const path =
         url.pathname;
 
+      /*
+        API STATUS
+      */
+
       if (
         request.method === "GET" &&
         path === "/"
       ) {
         return json({
           ok: true,
-          app: APP_NAME,
-          version: VERSION,
+
+          app:
+            APP_NAME,
+
+          version:
+            VERSION,
+
           referralReward:
             REFERRAL_REWARD,
+
           minimumWithdraw:
             MIN_WITHDRAW,
-          telegramAuth: true,
-          referralSecurity: true,
-          adminPanel: "/admin"
+
+          telegramAuth:
+            true,
+
+          referralSecurity:
+            true,
+
+          adminPanel:
+            "/admin"
         });
       }
+
+      /*
+        HEALTH CHECK
+      */
 
       if (
         request.method === "GET" &&
@@ -1603,13 +2043,20 @@ export default {
       ) {
         return json({
           ok: true,
-          database: true,
+
+          database:
+            Boolean(env.DB),
+
           botToken:
-            Boolean(env.BOT_TOKEN),
+            Boolean(
+              env.BOT_TOKEN
+            ),
+
           botApiSecret:
             Boolean(
               env.BOT_API_SECRET
             ),
+
           adminSecret:
             Boolean(
               env.ADMIN_SECRET
@@ -1617,116 +2064,158 @@ export default {
         });
       }
 
+      /*
+        ADMIN PANEL
+      */
+
       if (
         request.method === "GET" &&
         path === "/admin"
       ) {
-        return html(adminPage());
+        return html(
+          adminPage()
+        );
       }
+
+      /*
+        CHECK MEMBERSHIP
+      */
 
       if (
         request.method === "POST" &&
-        path === "/check-membership"
+        path ===
+          "/check-membership"
       ) {
-        let telegramUser;
+        let user;
 
         try {
-          telegramUser =
-            await validateTelegramInitData(
+          user =
+            await telegramUser(
               request,
               env
             );
+
         } catch (error) {
           return json(
             {
               success: false,
-              error: error.message
+              error:
+                error.message
             },
             401
           );
         }
 
-        const membership =
-          await checkMembership(
+        const result =
+          await membership(
             env,
-            telegramUser.id
+            user.id
           );
 
         return json({
           success: true,
-          ...membership
+          ...result
         });
       }
 
+      /*
+        BOT REGISTER USER
+      */
+
       if (
         request.method === "POST" &&
-        path === "/bot/register-user"
+        path ===
+          "/bot/register-user"
       ) {
-        return handleBotRegister(
+        return botRegister(
           request,
           env
         );
       }
+
+      /*
+        BOT REFERRAL CREDIT
+      */
 
       if (
         request.method === "POST" &&
         path ===
           "/bot/referral-credit"
       ) {
-        return handleReferralCredit(
+        return referralCredit(
           request,
           env
         );
       }
+
+      /*
+        MINI APP SESSION
+      */
 
       if (
         request.method === "POST" &&
         path === "/session"
       ) {
-        return handleMiniAppSession(
+        return session(
           request,
           env
         );
       }
 
+      /*
+        WITHDRAW REQUEST
+      */
+
       if (
         request.method === "POST" &&
         path === "/withdraw"
       ) {
-        return handleWithdraw(
+        return withdraw(
           request,
           env
         );
       }
+
+      /*
+        ADMIN LIST
+      */
 
       if (
         request.method === "GET" &&
         path ===
           "/admin/withdrawals"
       ) {
-        return handleAdminList(
+        return adminList(
           request,
           env
         );
       }
+
+      /*
+        ADMIN PAID
+      */
 
       if (
         request.method === "POST" &&
         path ===
           "/admin/withdrawals/paid"
       ) {
-        return handleAdminPaid(
+        return adminPaid(
           request,
           env
         );
       }
+
+      /*
+        ADMIN REJECT
+      */
 
       if (
         request.method === "POST" &&
         path ===
           "/admin/withdrawals/reject"
       ) {
-        return handleAdminReject(
+        return adminReject(
           request,
           env
         );
@@ -1742,11 +2231,13 @@ export default {
       );
 
     } catch (error) {
+
       console.log(error);
 
       return json(
         {
           success: false,
+
           error:
             error?.message ||
             "Server error"
